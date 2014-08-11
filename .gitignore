@@ -65,3 +65,8 @@ nb-configuration.xml
 !.travis.yml
 *~
 #############
+
+### Sass ###
+omod/src/main/compass/sass-external/
+*.css
+#############
