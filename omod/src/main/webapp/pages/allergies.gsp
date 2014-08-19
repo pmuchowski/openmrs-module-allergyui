@@ -12,3 +12,23 @@
 </script>
 
 ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
+
+<h2>
+	${ ui.message("allergyui.allergies") }
+</h2>
+
+<table id="allergies" width="100%" border="1" cellspacing="0" cellpadding="2">
+    <thead>
+	    <tr>
+	        <th>${ ui.message("allergyui.allergen") }</th>
+	        <th>${ ui.message("allergyui.reaction") }</th>
+	        <th>${ ui.message("allergyui.severity") }</th>
+	        <th>${ ui.message("allergyui.comment") }</th>
+	        <th>${ ui.message("allergyui.lastUpdated") }</th>
+	    </tr>
+    </thead>
+    
+    <tbody>
+    
+    </tbody>
+</table>
