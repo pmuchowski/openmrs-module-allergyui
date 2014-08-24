@@ -29,6 +29,10 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
     </thead>
     
     <tbody>
-    
+    	<% if (allergies.size() == 0) { %>
+            <tr>
+                <td colspan="5" align="center"> ${ allergies.allergyStatus } </td>
+            </tr>
+        <% } %>
     </tbody>
 </table>
