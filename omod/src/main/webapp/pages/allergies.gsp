@@ -34,5 +34,19 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                 <td colspan="5" align="center"> ${ allergies.allergyStatus } </td>
             </tr>
         <% } %>
+        
+        <% allergies.each { allergy -> %>
+            <tr>
+                <td> ${ allergy.allergen } </td>
+                <td> 
+                	<% allergy.reactions.eachWithIndex { reaction, index -> %>
+	               		<% if (index > 0) { %>,<% } %> ${reaction}	
+	                <% } %>
+                </td>
+                <td> ${ allergy.severity.name } </td>
+                <td> ${ allergy.comment } </td>
+                <td> ${ ui.formatDatetimePretty(allergy.dateLastUpdated) } </td>
+            </tr>
+        <% } %>
     </tbody>
 </table>
