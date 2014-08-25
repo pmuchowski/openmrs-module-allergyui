@@ -50,3 +50,13 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
         <% } %>
     </tbody>
 </table>
+
+<br/>
+
+<button class="confirm">
+    ${ ui.message("allergyui.addNewAllergy") }
+</button>
+
+<button class="confirm" style="float:right">
+    ${ ui.message("allergyui.noKnownAllergy") }
+</button>
