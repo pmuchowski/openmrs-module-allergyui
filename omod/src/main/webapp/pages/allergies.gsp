@@ -25,6 +25,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 	        <th>${ ui.message("allergyui.severity") }</th>
 	        <th>${ ui.message("allergyui.comment") }</th>
 	        <th>${ ui.message("allergyui.lastUpdated") }</th>
+	        <th>${ ui.message("coreapps.actions") }</th>
 	    </tr>
     </thead>
     
@@ -46,6 +47,10 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                 <td> ${ allergy.severity.name } </td>
                 <td> ${ allergy.comment } </td>
                 <td> ${ ui.formatDatetimePretty(allergy.dateLastUpdated) } </td>
+                <td>
+                	<i class="icon-pencil edit-action" title="${ ui.message("coreapps.edit") }"></i>
+                	<i class="icon-remove delete-action" title="${ ui.message("coreapps.delete") }"></i>
+                </td>
             </tr>
         <% } %>
     </tbody>
