@@ -4,9 +4,16 @@
         <h3>${ ui.message("allergyui.allergies").toUpperCase() }</h3>
     </div>
     <div class="info-body">
-
-        <div id="allergies-container" class="in collapse">
-            ${ ui.message(allergies.allergyStatus == "See list" ? "uicommons.loading.placeholder" :  allergies.allergyStatus) }
-        </div>
+        <% if (allergies.allergyStatus != "See list") { %>
+			 ${ ui.message(allergies.allergyStatus) }
+		<% } else { %>
+        <ul>
+            <% allergies.each { allergy -> %>
+	            <li>
+	            	${ allergy.allergen }
+	            </li>
+            <% } %>
+        </ul>
+		<% } %>
     </div>
 </div>
