@@ -62,6 +62,6 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
     ${ ui.message("allergyui.addNewAllergy") }
 </button>
 
-<button class="confirm" style="float:right">
+<button class="confirm" style="float:right; <% if (allergies.allergyStatus != "Unknown") { %> display:none; <% } %>">
     ${ ui.message("allergyui.noKnownAllergy") }
 </button>
