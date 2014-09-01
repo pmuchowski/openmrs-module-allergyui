@@ -29,6 +29,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 	}
 </style>
 
+<div ng-app="allergyApp">
 <form method="POST">
 	<table id="allergy">
 		<tr>
@@ -36,13 +37,13 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 				${ ui.message("allergyui.categories") }
 			</td>
 			<td>
-				<input type="radio" name="allergyType" value="DRUG" checked="checked"> ${ ui.message("allergyui.drug") }
+				<input type="radio" name="allergyType" ng-model="allergyType" value="DRUG" checked="checked"> ${ ui.message("allergyui.drug") }
 			</td>
 			<td>
-				<input type="radio" name="allergyType" value="FOOD"> ${ ui.message("allergyui.food") }
+				<input type="radio" name="allergyType" ng-model="allergyType" value="FOOD"> ${ ui.message("allergyui.food") }
 			</td>
 			<td>
-				<input type="radio" name="allergyType" value="ENVIRONMENT"> ${ ui.message("allergyui.environment") }
+				<input type="radio" name="allergyType" ng-model="allergyType" value="ENVIRONMENT"> ${ ui.message("allergyui.environment") }
 			</td>
 		</tr>
 		<tr>
@@ -87,7 +88,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 		</tr>
 		<tr>
 			<td colspan="3">
-				<button class="cancel" onclick="location.href='${ ui.pageLink("allergyui", "allergies", [patientId: patient.id]) }'">
+				<button class="cancel" onclick="location.href='${ ui.pageLink("allergyui", "allergies", [patientId: patient.id]) }'; return false;">
 				    ${ ui.message("coreapps.cancel") }
 				</button>
 			</td>
@@ -99,3 +100,4 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 		</tr>
 	</table>
 </form>
+</div>
