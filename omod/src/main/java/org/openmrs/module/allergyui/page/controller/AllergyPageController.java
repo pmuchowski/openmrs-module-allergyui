@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.openmrs.Concept;
 import org.openmrs.Patient;
@@ -15,9 +16,9 @@ import org.openmrs.module.allergyapi.Allergies;
 import org.openmrs.module.allergyapi.Allergy;
 import org.openmrs.module.allergyapi.AllergyReaction;
 import org.openmrs.module.allergyapi.api.PatientService;
+import org.openmrs.module.uicommons.util.InfoErrorMessageUtil;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
-import org.openmrs.ui.framework.fragment.action.SuccessResult;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -77,12 +78,13 @@ public class AllergyPageController {
 	}
 	
 	public String post(@RequestParam("patientId") Patient patient, @RequestParam("allergen") Concept allergen,
-	                   @RequestParam("severity") AllergySeverity severity, @RequestParam("comment") String comment,
+	                   @RequestParam("severity") AllergySeverity severity,
+	                   @RequestParam(value = "comment", required = false) String comment,
 	                   @RequestParam("allergyType") AllergenType allergenType,
 	                   @RequestParam("reaction") List<Concept> reactionConcepts,
 	                   @SpringBean("conceptService") ConceptService conceptService,
 	                   @SpringBean("allergyService") PatientService patientService, HttpServletRequest request,
-	                   PageModel model, UiUtils ui) {
+	                   PageModel model, HttpSession session, UiUtils ui) {
 		
 		Allergen algn = new Allergen(allergenType, allergen, null);
 		Concept severityConcept = getSeverityConcept(severity, conceptService);
@@ -94,7 +96,9 @@ public class AllergyPageController {
 		allergies.add(allergy);
 		patientService.setAllergies(patient, allergies);
 		
-		return new SuccessResult(ui.message("allergyui.addNewAllergy.success")).toString();
+		InfoErrorMessageUtil.flashInfoMessage(session, "allergyui.addNewAllergy.success");
+		
+		return "redirect:allergyui/allergies.page?patientId=" + patient.getPatientId();
 	}
 	
 	private Concept getSeverityConcept(AllergySeverity severity, ConceptService conceptService) {
