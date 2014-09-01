@@ -11,9 +11,8 @@
             <% allergies.each { allergy -> %>
 	            <li style="display: inline-block; font-size: 0.8em;">
 	            	${ allergy.allergen } =>
-	            	<% allergy.reactions.eachWithIndex { reaction, index -> %>
-	               		<% if (index > 0) { %>,<% } %> ${reaction}	(${ allergy.severity.name })
-	                <% } %>
+	            	<% allergy.reactions.eachWithIndex { reaction, index -> %><% if (index > 0) { %>,<% } %> ${reaction}<% } %>
+	                (${ allergy.severity.name })
 	            </li>
             <% } %>
         </ul>

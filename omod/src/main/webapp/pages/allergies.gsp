@@ -54,9 +54,7 @@ ${ ui.includeFragment("uicommons", "infoAndErrorMessage")}
             <tr>
                 <td> ${ allergy.allergen } </td>
                 <td> 
-                	<% allergy.reactions.eachWithIndex { reaction, index -> %>
-	               		<% if (index > 0) { %>,<% } %> ${reaction}	
-	                <% } %>
+                	<% allergy.reactions.eachWithIndex { reaction, index -> %><% if (index > 0) { %>,<% } %> ${reaction}<% } %>
                 </td>
                 <td> ${ allergy.severity.name } </td>
                 <td> ${ allergy.comment } </td>
@@ -72,7 +70,7 @@ ${ ui.includeFragment("uicommons", "infoAndErrorMessage")}
 
 <br/>
 
-<button class="confirm">
+<button class="confirm" onclick="location.href='${ ui.pageLink("allergyui", "allergy", [patientId: patient.id]) }'">
     ${ ui.message("allergyui.addNewAllergy") }
 </button>
 
