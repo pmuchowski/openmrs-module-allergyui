@@ -1,5 +1,8 @@
 <%
     ui.decorateWith("appui", "standardEmrPage")
+    
+    ui.includeJavascript("uicommons", "angular.js")
+    ui.includeJavascript("allergyui", "allergy.js")
 %>
 <script type="text/javascript">
     var breadcrumbs = [
@@ -29,8 +32,8 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 	}
 </style>
 
-<div ng-app="allergyApp">
-<form method="POST">
+<div ng-app="allergyApp" ng-controller="allergyController">
+<form method="post" action="${ ui.pageLink("allergyui", "allergy", [patientId: patient.id]) }">
 	<table id="allergy">
 		<tr>
 			<td>
@@ -50,9 +53,21 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 			<td colspan="2">
 				<fieldset>
 	                <legend>${ui.message("allergyui.allergen")}:</legend>
-	                <% drugAllergens.each { allergen -> %>
-	                	<input type="radio" name="allergen" value="${allergen.id}">${allergen.name}<br/>
-	                <% } %>
+	                <p ng-show="allergyType == 'DRUG'">
+		                <% drugAllergens.each { allergen -> %>
+		                	<input type="radio" name="allergen" value="${allergen.id}">${allergen.name}<br/>
+		                <% } %>
+	                </p>
+	                <p ng-show="allergyType == 'FOOD'">
+		                <% foodAllergens.each { allergen -> %>
+		                	<input type="radio" name="allergen" value="${allergen.id}">${allergen.name}<br/>
+		                <% } %>
+	                </p>
+	                <p ng-show="allergyType == 'ENVIRONMENT'">
+		                <% environmentalAllergens.each { allergen -> %>
+		                	<input type="radio" name="allergen" value="${allergen.id}">${allergen.name}<br/>
+		                <% } %>
+	                </p>
 	            </fieldset>
 			</td>
 			<td colspan="2">
