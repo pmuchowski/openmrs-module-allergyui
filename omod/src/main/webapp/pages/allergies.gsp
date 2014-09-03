@@ -56,7 +56,7 @@ ${ ui.includeFragment("uicommons", "infoAndErrorMessage")}
                 <td> 
                 	<% allergy.reactions.eachWithIndex { reaction, index -> %><% if (index > 0) { %>,<% } %> ${reaction}<% } %>
                 </td>
-                <td> ${ allergy.severity.name } </td>
+                <td> <% if (allergy.severity) { %> ${ allergy.severity.name } <% } %> </td>
                 <td> ${ allergy.comment } </td>
                 <td> ${ ui.formatDatetimePretty(allergy.dateLastUpdated) } </td>
                 <td>
