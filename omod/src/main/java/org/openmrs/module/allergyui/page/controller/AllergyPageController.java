@@ -82,7 +82,7 @@ public class AllergyPageController {
 	}
 	
 	public String post(@RequestParam("patientId") Patient patient, @RequestParam("allergen") Concept allergen,
-	                   @RequestParam("severity") Concept severity,
+	                   @RequestParam(value = "severity", required = false) Concept severity,
 	                   @RequestParam(value = "comment", required = false) String comment,
 	                   @RequestParam("allergyType") AllergenType allergenType,
 	                   @RequestParam("reaction") List<Concept> reactionConcepts,
