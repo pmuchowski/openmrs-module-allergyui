@@ -9,7 +9,7 @@
 		<% } else { %>
         <ul>
             <% allergies.each { allergy -> %>
-	            <li style="display: inline-block; font-size: 0.8em;">
+	            <li>
 	            	${ allergy.allergen } =>
 	            	<% allergy.reactions.eachWithIndex { reaction, index -> %><% if (index > 0) { %>,<% } %> ${reaction}<% } %>
 	            	<% if (allergy.severity) { %> (${ allergy.severity.name }) <% } %>
