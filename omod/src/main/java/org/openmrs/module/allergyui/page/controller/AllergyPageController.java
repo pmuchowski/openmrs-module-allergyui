@@ -8,7 +8,6 @@ import javax.servlet.http.HttpSession;
 
 import org.openmrs.Concept;
 import org.openmrs.Patient;
-import org.openmrs.activelist.AllergySeverity;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.allergyapi.Allergen;
 import org.openmrs.module.allergyapi.AllergenType;
@@ -32,17 +31,14 @@ public class AllergyPageController {
 	
 	public static final String ALLERGY_REACTIONS_UUID = "162555AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 	
-	public static final String MODERATE_UUID = "1499AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-	
-	public static final String MILD_UUID = "1498AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-	
-	public static final String SEVERE_UUID = "1500AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+	public static final String ALLERGY_SEVERITIES_UUID = "159411AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 	
 	public void controller(PageModel model, @RequestParam("patientId") Patient patient, UiUtils ui,
 	                       @SpringBean("allergyService") PatientService patientService,
 	                       @SpringBean("conceptService") ConceptService conceptService) {
 		
 		model.addAttribute("patient", patient);
+		model.addAttribute("allergenTypes", AllergenType.values());
 		
 		//drug allergens
 		List<Concept> concepts = new ArrayList<Concept>();
@@ -75,10 +71,18 @@ public class AllergyPageController {
 			concepts = concept.getSetMembers();
 		}
 		model.addAttribute("allergyReactions", concepts);
+		
+		//severities
+		concepts = new ArrayList<Concept>();
+		concept = conceptService.getConceptByUuid(ALLERGY_SEVERITIES_UUID);
+		if (concept != null) {
+			concepts = concept.getSetMembers();
+		}
+		model.addAttribute("severities", concepts);
 	}
 	
 	public String post(@RequestParam("patientId") Patient patient, @RequestParam("allergen") Concept allergen,
-	                   @RequestParam("severity") AllergySeverity severity,
+	                   @RequestParam("severity") Concept severity,
 	                   @RequestParam(value = "comment", required = false) String comment,
 	                   @RequestParam("allergyType") AllergenType allergenType,
 	                   @RequestParam("reaction") List<Concept> reactionConcepts,
@@ -87,8 +91,7 @@ public class AllergyPageController {
 	                   PageModel model, HttpSession session, UiUtils ui) {
 		
 		Allergen algn = new Allergen(allergenType, allergen, null);
-		Concept severityConcept = getSeverityConcept(severity, conceptService);
-		Allergy allergy = new Allergy(patient, algn, severityConcept, comment, null);
+		Allergy allergy = new Allergy(patient, algn, severity, comment, null);
 		List<AllergyReaction> reactions = getAllergyReactions(reactionConcepts, allergy);
 		allergy.setReactions(reactions);
 		
@@ -99,16 +102,6 @@ public class AllergyPageController {
 		InfoErrorMessageUtil.flashInfoMessage(session, "allergyui.addNewAllergy.success");
 		
 		return "redirect:allergyui/allergies.page?patientId=" + patient.getPatientId();
-	}
-	
-	private Concept getSeverityConcept(AllergySeverity severity, ConceptService conceptService) {
-		if (severity == AllergySeverity.MILD) {
-			return conceptService.getConceptByUuid(MILD_UUID);
-		} else if (severity == AllergySeverity.MODERATE) {
-			return conceptService.getConceptByUuid(MODERATE_UUID);
-		} else {
-			return conceptService.getConceptByUuid(SEVERE_UUID);
-		}
 	}
 	
 	private List<AllergyReaction> getAllergyReactions(List<Concept> reactionConcepts, Allergy allergy) {

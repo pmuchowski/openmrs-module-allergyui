@@ -1,8 +1,7 @@
 <%
     ui.decorateWith("appui", "standardEmrPage")
-    
     ui.includeJavascript("uicommons", "angular.js")
-    ui.includeJavascript("allergyui", "allergy.js")
+	ui.includeJavascript("allergyui", "allergy.js")
 %>
 <script type="text/javascript">
     var breadcrumbs = [
@@ -11,8 +10,6 @@
         { label: "${ ui.message("allergyui.allergies") }", link: '${ui.pageLink("allergyui", "allergies", [patientId: patient.id])}'},
         { label: "${ ui.message("allergyui.newAllergy") }" }
     ];
-    
-    var patient = { id: ${ patient.id } };
 </script>
 
 ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
@@ -21,98 +18,106 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 	${ ui.message("allergyui.addNewAllergy") }
 </h2>
 
+<div ng-app="allergyApp" ng-controller="allergyController">
+	<form method="post" id="allergy" action="${ ui.pageLink("allergyui", "allergy", [patientId: patient.id]) }">
+	    <div id="types" class="horizontal inputs">
+	        <label>${ ui.message("allergyui.categories") }:</label>
+	        <% allergenTypes.eachWithIndex { category, idx -> %>
+	            <div><input type="radio" name="allergyType" ng-model="allergyType" value="${ category }" ${ if(idx == 0) "checked=checked" }>${ category }</div>
+	        <% } %>
+	    </div>
+	    <div class="horizontal tabs">
+	        <div id="allergens" class="tab">
+	            <label>${ ui.message("allergyui.allergen") }:</label>
+	            <div ng-show="allergyType == 'DRUG'">
+	                <% drugAllergens.each { allergen -> %>
+	                    <div><input type="radio" name="allergen" value="${allergen.id}">${allergen.name}</div>
+	                <% } %>
+	            </div>
+	            <div ng-show="allergyType == 'FOOD'">
+	                <% foodAllergens.each { allergen -> %>
+	                    <div><input type="radio" name="allergen" value="${allergen.id}">${allergen.name}</div>
+	                <% } %>
+	            </div>
+	            <div ng-show="allergyType == 'ENVIRONMENTAL'">
+	                <% environmentalAllergens.each { allergen -> %>
+	                    <div><input type="radio" name="allergen" value="${allergen.id}">${allergen.name}</div>
+	                <% } %>
+	            </div>
+	        </div>
+	        <div id="reactions" class="tabs tab">
+	            <label>${ ui.message("allergyui.reactionSelection") }:</label>
+	            <% allergyReactions.each { reaction -> %>
+	                <div><input type="checkbox" name="reaction" value="${reaction.id}">${reaction.name}</div>
+	            <% } %>
+	        </div>
+	    </div>
+	    <div id="severities" class="horizontal inputs">
+	        <label>${ ui.message("allergyui.severity") }:</label>
+	        <% severities.each { severity -> %>
+	            <div><input type="radio" name="severity" value="${severity.id}">${severity.name}</div>
+	        <% } %>
+	    </div>
+	    <div id="comment" class="horizontal inputs">
+	        <label>${ ui.message("allergyui.comment") }:</label>
+	        <input type="text" name="comment"/>
+	    </div>
+	    <div id="actions">
+	        <input type="submit" id="addAllergyBtn" class="confirm right" value="${ ui.message("coreapps.save") }" />
+	        <input type="button" class="cancel" value="${ ui.message("coreapps.cancel") }"
+	         onclick="location.href='${ ui.pageLink("allergyui", "allergies", [patientId: patient.id]) }'" />
+	    </div>
+	</form>
+</div>
+
 <style>
-    table tr td {
-        border: none;
-        display: inline-block;
-    }
-    
-    table:not(.unstyled) tr:nth-child(even) {
-	  background: white;
+	#allergy label {
+		font-weight: bold;
+	}
+	
+	.horizontal {
+		display: table;
+	}
+	
+	.horizontal > * {
+		display: table-cell;
+	}
+	
+	.tabs {
+		width: 100%;
+	}
+	
+	.tabs > div {
+		width: 50%;
+	}
+	
+	#reactions > div {
+		float: left;
+	}
+	
+	#reactions > div:nth-child(even) {
+		clear: both;
+	}
+	
+	form, #allergens, #reactions {
+		border: 1px solid #DDD;
+		border-collapse: collapse;
+		padding: 20px;
+	}
+	
+	.tab {
+		padding-top: 0px !important;
+	}
+	
+	.tab > label {
+		padding-bottom: 15px;
+	}
+	
+	form > div {
+		margin-bottom: 15px;
+	}
+	
+	.inputs > div, .inputs > label {
+		padding-right: 20px;
 	}
 </style>
-
-<div ng-app="allergyApp" ng-controller="allergyController">
-<form method="post" action="${ ui.pageLink("allergyui", "allergy", [patientId: patient.id]) }">
-	<table id="allergy">
-		<tr>
-			<td>
-				${ ui.message("allergyui.categories") }
-			</td>
-			<td>
-				<input type="radio" name="allergyType" ng-model="allergyType" value="DRUG" checked="checked"> ${ ui.message("allergyui.drug") }
-			</td>
-			<td>
-				<input type="radio" name="allergyType" ng-model="allergyType" value="FOOD"> ${ ui.message("allergyui.food") }
-			</td>
-			<td>
-				<input type="radio" name="allergyType" ng-model="allergyType" value="ENVIRONMENT"> ${ ui.message("allergyui.environment") }
-			</td>
-		</tr>
-		<tr>
-			<td colspan="2">
-				<fieldset>
-	                <legend>${ui.message("allergyui.allergen")}:</legend>
-	                <p ng-show="allergyType == 'DRUG'">
-		                <% drugAllergens.each { allergen -> %>
-		                	<input type="radio" name="allergen" value="${allergen.id}">${allergen.name}<br/>
-		                <% } %>
-	                </p>
-	                <p ng-show="allergyType == 'FOOD'">
-		                <% foodAllergens.each { allergen -> %>
-		                	<input type="radio" name="allergen" value="${allergen.id}">${allergen.name}<br/>
-		                <% } %>
-	                </p>
-	                <p ng-show="allergyType == 'ENVIRONMENT'">
-		                <% environmentalAllergens.each { allergen -> %>
-		                	<input type="radio" name="allergen" value="${allergen.id}">${allergen.name}<br/>
-		                <% } %>
-	                </p>
-	            </fieldset>
-			</td>
-			<td colspan="2">
-				<fieldset>
-	                <legend>${ui.message("allergyui.reactionSelection")}</legend>
-	                <% allergyReactions.each { reaction -> %>
-	                	<input type="checkbox" name="reaction" value="${reaction.id}">${reaction.name}<br/>
-	                <% } %>
-	            </fieldset>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				${ ui.message("allergyui.severity") }
-			</td>
-			<td>
-				<input type="radio" name="severity" value="MILD"> ${ ui.message("allergyui.mild") }
-			</td>
-			<td>
-				<input type="radio" name="severity" value="MODERATE"> ${ ui.message("allergyui.moderate") }
-			</td>
-			<td>
-				<input type="radio" name="severity" value="SEVERE"> ${ ui.message("allergyui.severe") }
-			</td>
-		</tr>
-		<tr>
-			<td>
-				${ ui.message("allergyui.comment") }
-			</td>
-			<td colspan="3" style="width:80%">
-				<input type="text" name="comment">
-			</td>
-		</tr>
-		<tr>
-			<td colspan="3">
-				<button class="cancel" onclick="location.href='${ ui.pageLink("allergyui", "allergies", [patientId: patient.id]) }'; return false;">
-				    ${ ui.message("coreapps.cancel") }
-				</button>
-			</td>
-			<td align="right" style="float:right">
-				<button class="confirm" type="submit">
-				    ${ ui.message("coreapps.save") }
-				</button>
-			</td>
-		</tr>
-	</table>
-</form>
-</div>
