@@ -12,7 +12,7 @@
 	            <li style="display: inline-block; font-size: 0.8em;">
 	            	${ allergy.allergen } =>
 	            	<% allergy.reactions.eachWithIndex { reaction, index -> %><% if (index > 0) { %>,<% } %> ${reaction}<% } %>
-	                (${ allergy.severity.name })
+	            	<% if (allergy.severity) { %> (${ allergy.severity.name }) <% } %>
 	            </li>
             <% } %>
         </ul>
