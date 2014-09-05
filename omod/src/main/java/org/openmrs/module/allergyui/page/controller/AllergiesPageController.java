@@ -23,15 +23,23 @@ public class AllergiesPageController {
 	}
 	
 	public String post(@RequestParam("patientId") Patient patient,
-	                   @RequestParam(value = "action", required = false) String action, PageModel model,
+	                   @RequestParam(value = "action", required = false) String action, 
+	                   @RequestParam(value = "allergyId", required = false) Integer allergyId,
+	                   PageModel model,
 	                   HttpSession session, @SpringBean("allergyService") PatientService patientService) {
 		
 		if (StringUtils.isNotBlank(action)) {
 			try {
-				Allergies allergies = new Allergies();
+				Allergies allergies = null;
 				if ("confirmNoKnownAllergies".equals(action)) {
+					allergies = new Allergies();
 					allergies.confirmNoKnownAllergies();
 				}
+				else if ("removeAllergy".equals(action)) {
+					allergies = patientService.getAllergies(patient);
+					allergies.remove(allergies.getAllergy(allergyId));
+				}
+				
 				patientService.setAllergies(patient, allergies);
 				
 				InfoErrorMessageUtil.flashInfoMessage(session, "allergyui.message.success");
