@@ -64,8 +64,9 @@ ${ ui.includeFragment("uicommons", "infoAndErrorMessage")}
                 <td> ${ allergy.comment } </td>
                 <td> ${ ui.formatDatetimePretty(allergy.dateLastUpdated) } </td>
                 <td>
-                	<i class="icon-pencil edit-action" title="${ ui.message("coreapps.edit") }"></i>
-                	<i class="icon-remove delete-action" title="${ ui.message("coreapps.delete") }" onclick="removeAllergy('${ allergy.allergen }', ${ allergy.id})"></i>
+                	<i class="icon-pencil edit-action" title="${ ui.message("coreapps.edit") }"
+                       onclick="location.href='${ ui.pageLink("allergyui", "allergy", [allergyId:allergy.id, patientId: patient.id]) }'"></i>
+                    <i class="icon-remove delete-action" title="${ ui.message("coreapps.delete") }" onclick="removeAllergy('${ allergy.allergen }', ${ allergy.id})"></i>
                 </td>
             </tr>
         <% } %>
