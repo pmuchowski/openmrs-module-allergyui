@@ -35,6 +35,9 @@ public class AllergiesPageController {
 					allergies = new Allergies();
 					allergies.confirmNoKnownAllergies();
 				}
+				else if ("deactivate".equals(action)) {
+					allergies = new Allergies();
+				}
 				else if ("removeAllergy".equals(action)) {
 					allergies = patientService.getAllergies(patient);
 					allergies.remove(allergies.getAllergy(allergyId));
