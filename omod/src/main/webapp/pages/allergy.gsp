@@ -82,7 +82,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 	    </div>
 	    <div id="comment" class="horizontal inputs">
 	        <label>${ ui.message("allergyui.comment") }:</label>
-	        <input type="text" name="comment" value="${allergy.comment != null ? allergy.comment : ""}"/>
+	        <input type="text" maxlength="1024" name="comment" value="${allergy.comment != null ? allergy.comment : ""}"/>
 	    </div>
 	    <div id="actions">
 	        <input type="submit" id="addAllergyBtn" class="confirm right" value="${ ui.message("coreapps.save") }" />
