@@ -85,7 +85,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 	        <input type="text" maxlength="1024" style="width:100%" name="comment" value="${allergy.comment != null ? allergy.comment : ""}"/>
 	    </div>
 	    <div id="actions">
-	        <input type="submit" id="addAllergyBtn" class="confirm right" value="${ ui.message("coreapps.save") }" ng-disabled="!allergen"/>
+	        <input type="submit" id="addAllergyBtn" class="confirm right" value="${ ui.message("coreapps.save") }" <% if(!isEdit){ %> ng-disabled="!allergen" <% } %>/>
 	        <input type="button" class="cancel" value="${ ui.message("coreapps.cancel") }"
 	         onclick="location.href='${ ui.pageLink("allergyui", "allergies", [patientId: patient.id]) }'" />
 	    </div>
