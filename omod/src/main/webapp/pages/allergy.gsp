@@ -44,7 +44,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 	            <div ng-show="allergenType == 'DRUG'">
 	                <% drugAllergens.each { allergen -> %>
 	                    <div>
-                            <input type="radio" name="codedAllergen" value="${allergen.id}" class="coded_allergens"
+                            <input type="radio" name="codedAllergen" value="${allergen.id}" class="coded_allergens" ng-model="allergen" ng-click="toggle(\$event)" ng-keydown="toggle(\$event)"
                                 ${(allergy.allergen != null && allergen == allergy.allergen.codedAllergen) ? "checked=checked" : ""}>${allergen.name}
                         </div>
 	                <% } %>
@@ -52,7 +52,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 	            <div ng-show="allergenType == 'FOOD'">
 	                <% foodAllergens.each { allergen -> %>
 	                    <div>
-                            <input type="radio" name="codedAllergen" value="${allergen.id}" class="coded_allergens"
+                            <input type="radio" name="codedAllergen" value="${allergen.id}" class="coded_allergens" ng-model="allergen" ng-model="allergen" ng-click="toggle(\$event)" ng-keydown="toggle(\$event)"
                                 ${(allergy.allergen != null && allergen == allergy.allergen.codedAllergen) ? "checked=checked" : ""}>${allergen.name}
                         </div>
 	                <% } %>
@@ -60,7 +60,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 	            <div ng-show="allergenType == 'ENVIRONMENTAL'">
 	                <% environmentalAllergens.each { allergen -> %>
 	                    <div>
-                            <input type="radio" name="codedAllergen" value="${allergen.id}" class="coded_allergens"
+                            <input type="radio" name="codedAllergen" value="${allergen.id}" class="coded_allergens" ng-model="allergen" ng-model="allergen" ng-click="toggle(\$event)" ng-keydown="toggle(\$event)"
                                 ${(allergy.allergen != null && allergen == allergy.allergen.codedAllergen) ? "checked=checked" : ""}>${allergen.name}
                         </div>
 	                <% } %>
@@ -77,7 +77,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 	    <div id="severities" class="horizontal inputs">
 	        <label>${ ui.message("allergyui.severity") }:</label>
 	        <% severities.each { severity -> %>
-	            <div><input type="radio" name="severity" value="${severity.id}" ${ severity == allergy.severity ? "checked=checked" : "" }>${severity.name}</div>
+	            <div><input type="radio" name="severity" value="${severity.id}" ${ severity == allergy.severity ? "checked=checked" : "" } ng-model="severity" ng-click="toggle(\$event)" ng-keydown="toggle(\$event)">${severity.name}</div>
 	        <% } %>
 	    </div>
 	    <div id="comment" class="horizontal inputs" style="display:flex">
@@ -85,7 +85,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 	        <input type="text" maxlength="1024" style="width:100%" name="comment" value="${allergy.comment != null ? allergy.comment : ""}"/>
 	    </div>
 	    <div id="actions">
-	        <input type="submit" id="addAllergyBtn" class="confirm right" value="${ ui.message("coreapps.save") }" />
+	        <input type="submit" id="addAllergyBtn" class="confirm right" value="${ ui.message("coreapps.save") }" ng-disabled="!allergen"/>
 	        <input type="button" class="cancel" value="${ ui.message("coreapps.cancel") }"
 	         onclick="location.href='${ ui.pageLink("allergyui", "allergies", [patientId: patient.id]) }'" />
 	    </div>
