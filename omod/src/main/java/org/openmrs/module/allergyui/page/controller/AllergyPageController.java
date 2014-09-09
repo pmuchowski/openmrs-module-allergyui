@@ -20,11 +20,11 @@ import javax.servlet.http.HttpSession;
 
 import org.openmrs.Concept;
 import org.openmrs.Patient;
-import org.openmrs.api.ConceptService;
 import org.openmrs.module.allergyapi.Allergen;
 import org.openmrs.module.allergyapi.AllergenType;
 import org.openmrs.module.allergyapi.Allergies;
 import org.openmrs.module.allergyapi.Allergy;
+import org.openmrs.module.allergyapi.AllergyProperties;
 import org.openmrs.module.allergyapi.AllergyReaction;
 import org.openmrs.module.allergyapi.api.PatientService;
 import org.openmrs.module.uicommons.UiCommonsConstants;
@@ -38,20 +38,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 public class AllergyPageController {
 	
-	public static final String DRUG_ALLERGENS_UUID = "162552AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-	
-	public static final String FOOD_ALLERGENS_UUID = "162553AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-	
-	public static final String ENVIRONMENT_ALLERGENS_UUID = "162554AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-	
-	public static final String ALLERGY_REACTIONS_UUID = "162555AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-	
-	public static final String ALLERGY_SEVERITIES_UUID = "159411AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-	
 	public void controller(PageModel model, @RequestParam(value = "allergyId", required = false) Integer allergyId,
 	                       @RequestParam("patientId") Patient patient, UiUtils ui,
 	                       @SpringBean("allergyService") PatientService patientService,
-	                       @SpringBean("conceptService") ConceptService conceptService) {
+	                       @SpringBean("allergyProperties") AllergyProperties properties) {
 		
 		Allergy allergy;
 		if (allergyId == null) {
@@ -60,12 +50,12 @@ public class AllergyPageController {
 			allergy = patientService.getAllergies(patient).getAllergy(allergyId);
 		}
 		
-		setModelAttributes(allergy, model, conceptService);
+		setModelAttributes(allergy, model, properties);
 	}
 	
 	public String post(@MethodParam("getAllergy") @BindParams Allergy allergy, @RequestParam("patientId") Patient patient,
 	                   PageModel model, @SpringBean("allergyService") PatientService patientService,
-	                   @SpringBean("conceptService") ConceptService conceptService, HttpSession session, UiUtils ui) {
+	                   @SpringBean("allergyProperties") AllergyProperties properties, HttpSession session, UiUtils ui) {
 		
 		Allergies allergies = patientService.getAllergies(patient);
 		String successMsgCode = "allergyui.message.success";
@@ -84,7 +74,7 @@ public class AllergyPageController {
 			session.setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_ERROR_MESSAGE, "allergyui.message.fail");
 		}
 		
-		setModelAttributes(allergy, model, conceptService);
+		setModelAttributes(allergy, model, properties);
 		
 		return null;
 	}
@@ -118,14 +108,14 @@ public class AllergyPageController {
 		return allergy;
 	}
 	
-	private void setModelAttributes(Allergy allergy, PageModel model, ConceptService conceptService) {
+	private void setModelAttributes(Allergy allergy, PageModel model, AllergyProperties properties) {
 		
 		model.addAttribute("allergy", allergy);
 		model.addAttribute("allergenTypes", AllergenType.values());
 		
 		//drug allergens
 		List<Concept> concepts = new ArrayList<Concept>();
-		Concept concept = conceptService.getConceptByUuid(DRUG_ALLERGENS_UUID);
+		Concept concept = properties.getDrugAllergensConcept();
 		if (concept != null) {
 			concepts = concept.getSetMembers();
 		}
@@ -133,7 +123,7 @@ public class AllergyPageController {
 		
 		//food allergens
 		concepts = new ArrayList<Concept>();
-		concept = conceptService.getConceptByUuid(FOOD_ALLERGENS_UUID);
+		concept = properties.getFoodAllergensConcept();
 		if (concept != null) {
 			concepts = concept.getSetMembers();
 		}
@@ -141,7 +131,7 @@ public class AllergyPageController {
 		
 		//environmental allergens
 		concepts = new ArrayList<Concept>();
-		concept = conceptService.getConceptByUuid(ENVIRONMENT_ALLERGENS_UUID);
+		concept = properties.getEnvironmentAllergensConcept();
 		if (concept != null) {
 			concepts = concept.getSetMembers();
 		}
@@ -149,7 +139,7 @@ public class AllergyPageController {
 		
 		//allergy reactions
 		concepts = new ArrayList<Concept>();
-		concept = conceptService.getConceptByUuid(ALLERGY_REACTIONS_UUID);
+		concept = properties.getAllergyReactionsConcept();
 		if (concept != null) {
 			concepts = concept.getSetMembers();
 		}
@@ -157,9 +147,17 @@ public class AllergyPageController {
 		
 		//severities
 		concepts = new ArrayList<Concept>();
-		concept = conceptService.getConceptByUuid(ALLERGY_SEVERITIES_UUID);
+		concept = properties.getMildSeverityConcept();
 		if (concept != null) {
-			concepts = concept.getSetMembers();
+			concepts.add(concept);
+		}
+		concept = properties.getModerateSeverityConcept();
+		if (concept != null) {
+			concepts.add(concept);
+		}
+		concept = properties.getSevereSeverityConcept();
+		if (concept != null) {
+			concepts.add(concept);
 		}
 		model.addAttribute("severities", concepts);
 		
