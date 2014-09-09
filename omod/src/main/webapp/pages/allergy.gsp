@@ -80,9 +80,9 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 	            <div><input type="radio" name="severity" value="${severity.id}" ${ severity == allergy.severity ? "checked=checked" : "" }>${severity.name}</div>
 	        <% } %>
 	    </div>
-	    <div id="comment" class="horizontal inputs">
+	    <div id="comment" class="horizontal inputs" style="display:flex">
 	        <label>${ ui.message("allergyui.comment") }:</label>
-	        <input type="text" maxlength="1024" name="comment" value="${allergy.comment != null ? allergy.comment : ""}"/>
+	        <input type="text" maxlength="1024" style="width:100%" name="comment" value="${allergy.comment != null ? allergy.comment : ""}"/>
 	    </div>
 	    <div id="actions">
 	        <input type="submit" id="addAllergyBtn" class="confirm right" value="${ ui.message("coreapps.save") }" />
