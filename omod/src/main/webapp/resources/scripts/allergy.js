@@ -2,8 +2,11 @@ var app = angular.module("allergyApp", []);
 	
 app.controller("allergyController", [ '$scope', function($scope) {
 
-    $scope.toggleAllergens = function(){
-        $('.coded_allergens').attr('checked', false);
+    $scope.toggleAllergens = function(event, category){
+    	$scope.allergen = null;
+        $scope.allergenType = category;
+        $('.allergenType').css('background', 'darkgray');
+        event.target.style.background = '';
     }
     
     /*

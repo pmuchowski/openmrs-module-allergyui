@@ -30,17 +30,16 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
             <label>${ ui.message("allergyui.allergen") }:</label> ${allergy.allergen}
         </div>
         <% } else{ %>
-	    <div id="types" class="horizontal inputs">
-	        <label>${ ui.message("allergyui.category") }:</label>
-	        <% allergenTypes.each { category -> %>
-	            <div><input type="radio" name="allergenType" value="${ category }" ng-model="allergenType" ng-change="toggleAllergens()">${ category }</div>
+        <label>${ ui.message("allergyui.allergen") }:</label>
+	    <div id="types" class="horizontal">
+	        <% allergenTypes.eachWithIndex { category, index -> %>
+	            <div><input type="button" class="allergenType" <% if (index > 0) { %>style="background:darkgray"<% } %> name="allergenType" value="${ category }" ng-model="allergenType" ng-click="toggleAllergens(\$event, '${ category }')"></div>
 	        <% } %>
 	    </div>
         <% } %>
 	    <div class="horizontal tabs">
             <% if(!isEdit){ %>
 	        <div id="allergens" class="tab">
-	            <label>${ ui.message("allergyui.allergen") }:</label>
 	            <div ng-show="allergenType == 'DRUG'">
 	                <% drugAllergens.each { allergen -> %>
 	                    <div>
@@ -122,9 +121,9 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 	}
 	
 	form, #allergens, #reactions {
-		border: 1px solid #DDD;
 		border-collapse: collapse;
-		padding: 20px;
+		padding-left: 20px;
+		padding-right: 20px;
 	}
 	
 	.tab {
