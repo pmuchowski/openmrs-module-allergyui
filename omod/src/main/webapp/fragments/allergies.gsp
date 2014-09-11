@@ -11,12 +11,21 @@
         <ul>
             <% allergies.each { allergy -> %>
 	            <li>
-	            	${ allergy.allergen } =>
-	            	<% allergy.reactions.eachWithIndex { reaction, index -> %><% if (index > 0) { %>,<% } %> ${reaction}<% } %>
-	            	<% if (allergy.severity) { %> (${ allergy.severity.name }) <% } %>
+	            	<span class="allergyAllergen">${ allergy.allergen }</span>
+	            	<span class="allergyReaction"><% allergy.reactions.eachWithIndex { reaction, index -> %><% if (index > 0) { %>,<% } %> ${reaction}<% } %>
+	            	<% if (allergy.severity) { %> (${ allergy.severity.name }) <% } %></span>
 	            </li>
             <% } %>
         </ul>
 		<% } %>
     </div>
 </div>
+
+<style>
+	.allergyAllergen {
+		color: #00463f;
+	}
+	.allergyReaction {
+    	font-size: 0.8em;
+    }
+</style>

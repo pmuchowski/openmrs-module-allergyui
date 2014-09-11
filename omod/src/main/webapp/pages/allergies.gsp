@@ -39,7 +39,7 @@ ${ ui.includeFragment("uicommons", "infoAndErrorMessage")}
     <tbody>
     	<% if (allergies.size() == 0) { %>
             <tr>
-                <td colspan="6" align="center">
+                <td class="allergyStatus" colspan="6" align="center">
                 <% if (allergies.allergyStatus != "No known allergies") { %>
                     ${ allergies.allergyStatus }
                 <% } else { %>
@@ -124,3 +124,9 @@ ${ ui.includeFragment("uicommons", "infoAndErrorMessage")}
         </form>
     </div>
 </div>
+
+<style>
+	.allergyStatus {
+		font-weight: bold;
+	}
+</style>
