@@ -79,32 +79,15 @@ ${ ui.includeFragment("uicommons", "infoAndErrorMessage")}
     ${ ui.message("allergyui.addNewAllergy") }
 </button>
 
-<button id="allergyui-confirm-no-known-allergy" class="confirm" style="float:right; <% if (allergies.allergyStatus != "Unknown") { %> display:none; <% } %>"
-    onclick="showConfirmNoKnownAllergyDialog()">
-    ${ ui.message("allergyui.noKnownAllergy") }
-</button>
-
+<form method="POST" style="display:inline">
+    <input type="hidden" name="patientId" value="${patient.id}"/>
+    <input type="hidden" name="action" value="confirmNoKnownAllergies"/>
+	<button type="submit" class="confirm" style="float:right; <% if (allergies.allergyStatus != "Unknown") { %> display:none; <% } %>">
+	    ${ ui.message("allergyui.noKnownAllergy") }
+	</button>
+</form>
 
 <%/* DIALOGS */%>
-<div id="allergyui-confirm-no-known-allergy-dialog" class="dialog" style="display: none">
-    <div class="dialog-header">
-        <h3>${ ui.message("allergyui.noKnownAllergy") }</h3>
-    </div>
-    <div class="dialog-content">
-        <ul>
-            <li class="info">
-                <span>${ ui.message("allergyui.noKnownAllergy.message") }</span>
-            </li>
-        </ul>
-        <form method="POST">
-            <input type="hidden" name="patientId" value="${patient.id}"/>
-            <input type="hidden" name="action" value="confirmNoKnownAllergies"/>
-            <button class="confirm right" type="submit">${ ui.message("general.yes") }</button>
-            <button class="cancel">${ ui.message("general.no") }</button>
-        </form>
-    </div>
-</div>
-
 <div id="allergyui-remove-allergy-dialog" class="dialog" style="display: none">
     <div class="dialog-header">
         <h3>${ ui.message("allergyui.removeAllergy") }</h3>
