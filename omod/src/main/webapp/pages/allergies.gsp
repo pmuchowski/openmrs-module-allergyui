@@ -43,12 +43,12 @@ ${ ui.includeFragment("uicommons", "infoAndErrorMessage")}
                 <% if (allergies.allergyStatus != "No known allergies") { %>
                     ${ allergies.allergyStatus }
                 <% } else { %>
-                    <form method="POST">
+                    <form name="deactivateForm" method="POST">
                         ${ allergies.allergyStatus }
                         <input type="hidden" name="patientId" value="${patient.id}"/>
                         <input type="hidden" name="action" value="deactivate"/>
-                        <button class="small" type="submit">${ ui.message("allergyui.deactivate") }</button>
-                    </form>
+                        <i style="color:red;cursor:pointer" class="icon-remove small" onclick="document.deactivateForm.submit();"/>
+                     </form>
                 <% } %>
                 </td>
             </tr>
