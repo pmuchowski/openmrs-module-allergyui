@@ -13,11 +13,6 @@
  */
 package org.openmrs.module.allergyui.page.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpSession;
-
 import org.openmrs.Concept;
 import org.openmrs.Patient;
 import org.openmrs.module.allergyapi.Allergen;
@@ -35,6 +30,10 @@ import org.openmrs.ui.framework.annotation.MethodParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AllergyPageController {
 	
@@ -83,6 +82,7 @@ public class AllergyPageController {
 	                          @RequestParam("patientId") Patient patient,
 	                          @BindParams Allergen allergen,
 	                          @RequestParam(value = "allergyReactionConcepts", required = false) List<Concept> allergyReactionConcepts,
+                              @RequestParam(value = "severity", required = false) Concept severity,
 	                          @SpringBean("allergyService") PatientService patientService) {
 		
 		Allergy allergy;
@@ -104,7 +104,10 @@ public class AllergyPageController {
 		for (Concept concept : allergyReactionConcepts) {
 			allergy.addReaction(new AllergyReaction(null, concept, null));
 		}
-		
+
+        // need to explicitly handle severity because @BindParams doesn't handle the case where you unset it (and don't submit a parameter)
+        allergy.setSeverity(severity);
+
 		return allergy;
 	}
 	

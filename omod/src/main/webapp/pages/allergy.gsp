@@ -1,88 +1,97 @@
 <%
     ui.decorateWith("appui", "standardEmrPage")
-    ui.includeJavascript("uicommons", "angular.js")
+    ui.includeJavascript("uicommons", "angular.min.js")
+    ui.includeJavascript("uicommons", "angular-ui/ui-bootstrap-tpls-0.11.0.min.js")
 	ui.includeJavascript("allergyui", "allergy.js")
+
+    ui.includeCss("allergyui", "allergy.css")
     def isEdit = allergy.id != null;
+    def title = isEdit ?
+            ui.message("allergyui.editAllergy", ui.format(allergy.allergen)) :
+            ui.message("allergyui.addNewAllergy");
+
+    def allergensByType = [
+        DRUG: drugAllergens,
+        FOOD: foodAllergens,
+        ENVIRONMENTAL: environmentalAllergens
+    ]
 %>
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
         { label: "${ ui.format(patient.familyName) }, ${ ui.format(patient.givenName) }" , link: '${ui.pageLink("coreapps", "clinicianfacing/patient", [patientId: patient.id])}'},
         { label: "${ ui.message("allergyui.allergies") }", link: '${ui.pageLink("allergyui", "allergies", [patientId: patient.id])}'},
-        { label: "${ ui.message("allergyui.newAllergy") }" }
+        { label: "${ ui.escapeJs(title) }" }
     ];
 </script>
 
 ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 
-<h2>
-	${ ui.message(isEdit ? "allergyui.editAllergy" : "allergyui.addNewAllergy") }
-</h2>
+<h2>${ title }</h2>
 
-<div ng-app="allergyApp" ng-controller="allergyController" data-ng-init="allergenType='${allergy.allergen == null ? "DRUG" : allergy.allergen.allergenType}'">
+<div ng-app="allergyApp" ng-controller="allergyController" ng-init="severity = ${ allergy?.severity?.id }; allergenType='${allergy.allergen == null ? "DRUG" : allergy.allergen.allergenType}'">
 	<form method="post" id="allergy" action="${ ui.pageLink("allergyui", "allergy", [patientId: patient.id]) }">
-        <% if(isEdit){ %>
-        <input type="hidden" name="allergyId" value="${allergy.id}" />
-        <div id="types" class="horizontal inputs">
-            <label>${ ui.message("allergyui.category") }:</label> ${allergy.allergen.allergenType}
-        </div>
-        <div id="types" class="horizontal inputs">
-            <label>${ ui.message("allergyui.allergen") }:</label> ${allergy.allergen}
-        </div>
-        <% } else{ %>
-        <label>${ ui.message("allergyui.allergen") }:</label>
-	    <div id="types" class="horizontal">
-	        <% allergenTypes.eachWithIndex { category, index -> %>
-	            <div><input type="button" class="allergenType" <% if (index > 0) { %>style="background:darkgray"<% } %> name="allergenType" value="${ category }" ng-model="allergenType" ng-click="toggleAllergens(\$event, '${ category }')"></div>
-	        <% } %>
-	    </div>
+
+        <input type="hidden" name="allergenType" value="{{allergenType}}"/>
+        <% if (isEdit) { %>
+            <input type="hidden" name="allergyId" value="${allergy.id}" />
         <% } %>
-	    <div class="horizontal tabs">
-            <% if(!isEdit){ %>
-	        <div id="allergens" class="tab">
-	            <div ng-show="allergenType == 'DRUG'">
-	                <% drugAllergens.each { allergen -> %>
-	                    <div>
-                            <input type="radio" name="codedAllergen" value="${allergen.id}" class="coded_allergens" ng-model="allergen" ng-click="toggle(\$event)" ng-keydown="toggle(\$event)"
-                                ${(allergy.allergen != null && allergen == allergy.allergen.codedAllergen) ? "checked=checked" : ""}>${allergen.name}
-                        </div>
-	                <% } %>
-	            </div>
-	            <div ng-show="allergenType == 'FOOD'">
-	                <% foodAllergens.each { allergen -> %>
-	                    <div>
-                            <input type="radio" name="codedAllergen" value="${allergen.id}" class="coded_allergens" ng-model="allergen" ng-model="allergen" ng-click="toggle(\$event)" ng-keydown="toggle(\$event)"
-                                ${(allergy.allergen != null && allergen == allergy.allergen.codedAllergen) ? "checked=checked" : ""}>${allergen.name}
-                        </div>
-	                <% } %>
-	            </div>
-	            <div ng-show="allergenType == 'ENVIRONMENTAL'">
-	                <% environmentalAllergens.each { allergen -> %>
-	                    <div>
-                            <input type="radio" name="codedAllergen" value="${allergen.id}" class="coded_allergens" ng-model="allergen" ng-model="allergen" ng-click="toggle(\$event)" ng-keydown="toggle(\$event)"
-                                ${(allergy.allergen != null && allergen == allergy.allergen.codedAllergen) ? "checked=checked" : ""}>${allergen.name}
-                        </div>
-	                <% } %>
-	            </div>
-	        </div>
+
+        <% if (!isEdit) { %>
+            <div id="allergens">
+
+                <div id="types" class="button-group horizontal">
+                    <% allergenTypes.each { category -> %>
+                    <label class="button small" ng-model="allergenType" btn-radio="'${category.name()}'" ng-class="{ confirm: allergenType == '${category.name()}' }">
+                        ${ category }
+                    </label>
+                    <% } %>
+                </div>
+
+                <% allergensByType.each {
+                    def typeName = it.key
+                    def allergens = it.value
+                %>
+                    <ul ng-show="allergenType == '${ typeName }'">
+                        <% allergens.each { allergen -> %>
+                        <li>
+                            <input id="allergen-${allergen.id}" type="radio" name="codedAllergen" value="${allergen.id}" class="coded_allergens" ng-model="allergen"
+                                ${(allergy.allergen != null && allergen == allergy.allergen.codedAllergen) ? "checked=checked" : ""}/>
+                            <label for="allergen-${allergen.id}">${allergen.name}</label>
+                        </li>
+                        <% } %>
+                    </ul>
+                <% } %>
+            </div>
+        <% } %>
+
+        <div id="reactions">
+            <label class="heading">${ ui.message("allergyui.reactionSelection") }:</label>
+            <ul>
+            <% reactionConcepts.each { reaction -> %>
+                <li>
+                    <input type="checkbox" id="reaction-${reaction.id}" class="allergy-reaction" name="allergyReactionConcepts" value="${reaction.id}" ${ allergyReactionConcepts.contains(reaction) ? "checked=checked" : "" }/>
+                    <label for="reaction-${reaction.id}">${reaction.name}</label>
+                </li>
             <% } %>
-	        <div id="reactions" class="tabs tab">
-	            <label>${ ui.message("allergyui.reactionSelection") }:</label>
-	            <% reactionConcepts.each { reaction -> %>
-	                <div><input type="checkbox" name="allergyReactionConcepts" value="${reaction.id}" ${ allergyReactionConcepts.contains(reaction) ? "checked=checked" : "" }>${reaction.name}</div>
-	            <% } %>
-	        </div>
-	    </div>
-	    <div id="severities" class="horizontal inputs">
-	        <label>${ ui.message("allergyui.severity") }:</label>
+            </ul>
+        </div>
+
+	    <div id="severities" class="horizontal">
+	        <label class="heading">${ ui.message("allergyui.severity") }:</label>
 	        <% severities.each { severity -> %>
-	            <div><input type="radio" name="severity" value="${severity.id}" ${ severity == allergy.severity ? "checked=checked" : "" } ng-model="severity" ng-click="toggle(\$event)" ng-keydown="toggle(\$event)">${severity.name}</div>
+	            <p>
+                    <input type="radio" id="severity-${severity.id}" class="allergy-severity" name="severity" value="${severity.id}" ${ severity == allergy.severity ? "checked=checked" : "" } ng-checked="severity == ${severity.id}" ng-model="severity" ng-click="toggle(\$event)" ng-keydown="toggle(\$event)"/>
+                    <label for="severity-${severity.id}">${severity.name}</label>
+                </p>
 	        <% } %>
 	    </div>
-	    <div id="comment" class="horizontal inputs" style="display:flex">
+
+	    <div id="comment" style="display:flex">
 	        <label>${ ui.message("allergyui.comment") }:</label>
-	        <input type="text" maxlength="1024" style="width:100%" name="comment" value="${allergy.comment != null ? allergy.comment : ""}"/>
+	        <textarea id="allergy-comment" maxlength="1024" name="comment">${allergy.comment != null ? allergy.comment : ""}</textarea>
 	    </div>
+
 	    <div id="actions">
 	        <input type="submit" id="addAllergyBtn" class="confirm right" value="${ ui.message("coreapps.save") }" <% if(!isEdit){ %> ng-disabled="!allergen" <% } %>/>
 	        <input type="button" class="cancel" value="${ ui.message("coreapps.cancel") }"
@@ -90,55 +99,3 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 	    </div>
 	</form>
 </div>
-
-<style>
-	#allergy label {
-		font-weight: bold;
-	}
-	
-	.horizontal {
-		display: table;
-	}
-	
-	.horizontal > * {
-		display: table-cell;
-	}
-	
-	.tabs {
-		width: 100%;
-	}
-	
-	.tabs > div {
-		width: 50%;
-	}
-	
-	#reactions > div {
-		float: left;
-	}
-	
-	#reactions > div:nth-child(even) {
-		clear: both;
-	}
-	
-	form, #allergens, #reactions {
-		border-collapse: collapse;
-		padding-left: 20px;
-		padding-right: 20px;
-	}
-	
-	.tab {
-		padding-top: 0px !important;
-	}
-	
-	.tab > label {
-		padding-bottom: 15px;
-	}
-	
-	form > div {
-		margin-bottom: 15px;
-	}
-	
-	.inputs > div, .inputs > label {
-		padding-right: 20px;
-	}
-</style>

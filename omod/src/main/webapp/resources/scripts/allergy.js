@@ -1,15 +1,28 @@
-var app = angular.module("allergyApp", []);
+var app = angular.module("allergyApp", ['ui.bootstrap']);
 	
 app.controller("allergyController", [ '$scope', function($scope) {
 
-    $scope.toggleAllergens = function(event, category){
-    	$scope.allergen = null;
-        $scope.allergenType = category;
-        $('.allergenType').css('background', 'darkgray');
-        event.target.style.background = '';
-    }
-    
+    $scope.allergen = null;
+    $scope.allergenType = null;
+    $scope.severity = null;
+
+    $scope.$watch('allergenType', function(newValue, oldValue) {
+        // clear allergen any time they change the type
+        $scope.allergen = null;
+    });
+
+    $scope.$watch('allergen', function(newValue, oldValue) {
+        // if you had already specified allergen, then change it, clear other fields
+        if (oldValue) {
+            $('input.allergy-reaction').attr('checked', false);
+            $('input.allergy-severity').attr('checked', false);
+            $('#allergy-comment').val('');
+        }
+    });
+
     /*
+     * This code lets us uncheck radio buttons.
+     *
      * When an element is clicked, the model has not yet
      * been updated, so we check the value of the model 
      * to the value of the clicked element.  If they are 
