@@ -59,7 +59,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                                 ${(allergy.allergen != null && allergen == allergy.allergen.codedAllergen) ? "checked=checked" : ""}/>
                             <label for="allergen-${allergen.id}">${allergen.name}</label>
                             
-                            <% if (allergen.name.name == 'OTHER NON-CODED') { %>
+                            <% if (allergen.uuid == '5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') { %>
                             	<input type="text" name="nonCodedAllergen" ng-show="allergen == '${allergen.id}'"/>
                             <% } %>
                         </li>
