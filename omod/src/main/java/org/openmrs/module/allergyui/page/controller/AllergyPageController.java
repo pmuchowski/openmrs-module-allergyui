@@ -83,6 +83,8 @@ public class AllergyPageController {
 	                          @BindParams Allergen allergen,
 	                          @RequestParam(value = "allergyReactionConcepts", required = false) List<Concept> allergyReactionConcepts,
                               @RequestParam(value = "severity", required = false) Concept severity,
+                              @RequestParam(value = "reactionNonCoded", required = false) String reactionNonCoded,
+                              @SpringBean("allergyProperties") AllergyProperties properties,
 	                          @SpringBean("allergyService") PatientService patientService) {
 		
 		Allergy allergy;
@@ -102,7 +104,8 @@ public class AllergyPageController {
 		
 		//Add any newly added ones
 		for (Concept concept : allergyReactionConcepts) {
-			allergy.addReaction(new AllergyReaction(null, concept, null));
+			String nonCodedReaction = concept.equals(properties.getOtherNonCodedConcept()) ? reactionNonCoded : null;
+			allergy.addReaction(new AllergyReaction(null, concept, nonCodedReaction));
 		}
 
         // need to explicitly handle severity because @BindParams doesn't handle the case where you unset it (and don't submit a parameter)
