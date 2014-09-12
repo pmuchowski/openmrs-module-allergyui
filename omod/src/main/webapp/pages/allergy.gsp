@@ -58,6 +58,10 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                             <input id="allergen-${allergen.id}" type="radio" name="codedAllergen" value="${allergen.id}" class="coded_allergens" ng-model="allergen"
                                 ${(allergy.allergen != null && allergen == allergy.allergen.codedAllergen) ? "checked=checked" : ""}/>
                             <label for="allergen-${allergen.id}">${allergen.name}</label>
+                            
+                            <% if (allergen.name.name == 'OTHER NON-CODED') { %>
+                            	<input type="text" name="nonCodedAllergen" ng-show="allergen == '${allergen.id}'"/>
+                            <% } %>
                         </li>
                         <% } %>
                     </ul>
