@@ -11,10 +11,10 @@
         <ul>
             <% allergies.each { allergy -> %>
 	            <li>
-	            	<span style="color:#00463f">${ allergy.allergen }</span>
+	            	<span style="color:#00463f">${ ui.format(allergy.allergen) }</span>
 	            	<% allergy.reactions.eachWithIndex { reaction, index -> %>
 	            		<% if (index > 0) { %>,<% } %> 
-	            		<span style="color:darkgray">${reaction}</span>
+	            		<span style="color:darkgray">${ui.format(reaction)}</span>
 	            	<% } %>
 	            </li>
             <% } %>

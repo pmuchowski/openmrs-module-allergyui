@@ -56,11 +56,11 @@ ${ ui.includeFragment("uicommons", "infoAndErrorMessage")}
         
         <% allergies.each { allergy -> %>
             <tr>
-                <td> ${ allergy.allergen } </td>
+                <td> ${ ui.format(allergy.allergen) } </td>
                 <td> 
                 	<% allergy.reactions.eachWithIndex { reaction, index -> %><% if (index > 0) { %>,<% } %> ${reaction}<% } %>
                 </td>
-                <td> <% if (allergy.severity) { %> ${ allergy.severity.name } <% } %> </td>
+                <td> <% if (allergy.severity) { %> ${ ui.format(allergy.severity.name) } <% } %> </td>
                 <td> ${ allergy.comment } </td>
                 <td> ${ ui.formatDatetimePretty(allergy.dateLastUpdated) } </td>
                 <td>

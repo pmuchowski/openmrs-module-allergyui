@@ -42,7 +42,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 
                 <div id="types" class="button-group horizontal">
                     <% allergenTypes.each { category -> %>
-                    <label class="button small" ng-model="allergenType" btn-radio="'${category.name()}'" ng-class="{ confirm: allergenType == '${category.name()}' }">
+                    <label class="button small" ng-model="allergenType" btn-radio="'${ui.format(category)}'" ng-class="{ confirm: allergenType == '${ui.format(category)}' }">
                         ${ category }
                     </label>
                     <% } %>
@@ -57,7 +57,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                         <li>
                             <input id="allergen-${allergen.id}" type="radio" name="codedAllergen" value="${allergen.id}" class="coded_allergens" ng-model="allergen"
                                 ${(allergy.allergen != null && allergen == allergy.allergen.codedAllergen) ? "checked=checked" : ""}/>
-                            <label for="allergen-${allergen.id}">${allergen.name}</label>
+                            <label for="allergen-${allergen.id}">${ui.format(allergen)}</label>
                             
                             <% if (allergen.uuid == '5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') { %>
                             	<input type="text" name="nonCodedAllergen" ng-show="allergen == '${allergen.id}'"/>
@@ -75,7 +75,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
             <% reactionConcepts.each { reaction -> %>
                 <li>
                     <input ng-model="reaction${reaction.id}" type="checkbox" id="reaction-${reaction.id}" class="allergy-reaction" name="allergyReactionConcepts" value="${reaction.id}" ${ allergyReactionConcepts.contains(reaction) ? "checked=checked" : "" }/>
-                    <label for="reaction-${reaction.id}">${reaction.name}</label>
+                    <label for="reaction-${reaction.id}">${ui.format(reaction)}</label>
                     <% if (reaction.uuid == '5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') { %>
                     	<input type="text" name="reactionNonCoded" ng-show="reaction${reaction.id}"/>
                     <% } %>
@@ -89,7 +89,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 	        <% severities.each { severity -> %>
 	            <p>
                     <input type="radio" id="severity-${severity.id}" class="allergy-severity" name="severity" value="${severity.id}" ${ severity == allergy.severity ? "checked=checked" : "" } ng-checked="severity == ${severity.id}" ng-model="severity" ng-click="toggle(\$event)" ng-keydown="toggle(\$event)"/>
-                    <label for="severity-${severity.id}">${severity.name}</label>
+                    <label for="severity-${severity.id}">${ui.format(severity)}</label>
                 </p>
 	        <% } %>
 	    </div>
