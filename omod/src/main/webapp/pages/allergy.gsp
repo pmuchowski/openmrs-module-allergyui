@@ -74,7 +74,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
             <ul>
             <% reactionConcepts.each { reaction -> %>
                 <li>
-                    <input ng-model="reaction${reaction.id}" type="checkbox" id="reaction-${reaction.id}" class="allergy-reaction" name="allergyReactionConcepts" value="${reaction.id}" ${ allergyReactionConcepts.contains(reaction) ? "checked=checked" : "" }/>
+                    <input <% if (!isEdit) { %> ng-model="reaction${reaction.id}" <% } %> type="checkbox" id="reaction-${reaction.id}" class="allergy-reaction" name="allergyReactionConcepts" value="${reaction.id}" ${ allergyReactionConcepts.contains(reaction) ? "checked=checked" : "" }/>
                     <label for="reaction-${reaction.id}">${ui.format(reaction)}</label>
                     <% if (reaction.uuid == '5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') { %>
                     	<input type="text" name="reactionNonCoded" ng-show="reaction${reaction.id}"/>
