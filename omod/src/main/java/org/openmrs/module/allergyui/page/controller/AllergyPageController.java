@@ -92,8 +92,10 @@ public class AllergyPageController {
 		
 		Allergy allergy;
 		if (allergyId == null) {
-			int index = Arrays.asList(AllergenType.values()).indexOf(allergen.getAllergenType());
-			allergen.setNonCodedAllergen(nonCodedAllergen[index]);
+			if (allergen.getNonCodedAllergen() != null) {
+				int index = Arrays.asList(AllergenType.values()).indexOf(allergen.getAllergenType());
+				allergen.setNonCodedAllergen(nonCodedAllergen[index]);
+			}
 			allergy = new Allergy(patient, allergen, null, null, null);
 		} else {
 			allergy = patientService.getAllergies(patient).getAllergy(allergyId);
