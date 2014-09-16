@@ -22,9 +22,9 @@
 	</organization>
 
 	<scm>
-		<connection>scm:svn:https://svn.openmrs.org/openmrs-modules/allergyui/trunk/</connection>
-		<developerConnection>scm:svn:https://svn.openmrs.org/openmrs-modules/allergyui/trunk/</developerConnection>
-		<url>https://svn.openmrs.org/openmrs-modules/allergyui/trunk/</url>
+		<connection>scm:git:git@github.com:openmrs/openmrs-module-allergyui.git</connection>
+		<developerConnection>scm:git:git@github.com:openmrs/openmrs-module-allergyui.git</developerConnection>
+		<url>https://github.com/openmrs/openmrs-module-allergyui</url>
 	</scm>
 
 	<modules>
