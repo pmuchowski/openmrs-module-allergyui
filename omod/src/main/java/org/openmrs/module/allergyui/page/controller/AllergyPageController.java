@@ -92,7 +92,7 @@ public class AllergyPageController {
 		
 		Allergy allergy;
 		if (allergyId == null) {
-			if (allergen.getNonCodedAllergen() != null) {
+			if (nonCodedAllergen.length > 0) {
 				int index = Arrays.asList(AllergenType.values()).indexOf(allergen.getAllergenType());
 				allergen.setNonCodedAllergen(nonCodedAllergen[index]);
 			}
