@@ -112,7 +112,13 @@ public class AllergyPageController {
 		//Add any newly added ones
 		for (Concept concept : allergyReactionConcepts) {
 			String nonCodedReaction = concept.equals(properties.getOtherNonCodedConcept()) ? reactionNonCoded : null;
-			allergy.addReaction(new AllergyReaction(null, concept, nonCodedReaction));
+			AllergyReaction reaction = allergy.getReaction(concept);
+			if (reaction == null) {
+				allergy.addReaction(new AllergyReaction(null, concept, nonCodedReaction));
+			}
+			else {
+				reaction.setReactionNonCoded(nonCodedReaction);
+			}
 		}
 
         // need to explicitly handle severity because @BindParams doesn't handle the case where you unset it (and don't submit a parameter)
