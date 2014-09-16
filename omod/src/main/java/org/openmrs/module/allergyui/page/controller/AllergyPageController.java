@@ -13,6 +13,12 @@
  */
 package org.openmrs.module.allergyui.page.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
 import org.openmrs.Concept;
 import org.openmrs.Patient;
 import org.openmrs.module.allergyapi.Allergen;
@@ -30,10 +36,6 @@ import org.openmrs.ui.framework.annotation.MethodParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.List;
 
 public class AllergyPageController {
 	
@@ -81,6 +83,7 @@ public class AllergyPageController {
 	public Allergy getAllergy(@RequestParam(value = "allergyId", required = false) Integer allergyId,
 	                          @RequestParam("patientId") Patient patient,
 	                          @BindParams Allergen allergen,
+	                          @RequestParam(value = "nonCodedAllergen", required = false) String[] nonCodedAllergen,
 	                          @RequestParam(value = "allergyReactionConcepts", required = false) List<Concept> allergyReactionConcepts,
                               @RequestParam(value = "severity", required = false) Concept severity,
                               @RequestParam(value = "reactionNonCoded", required = false) String reactionNonCoded,
@@ -89,6 +92,8 @@ public class AllergyPageController {
 		
 		Allergy allergy;
 		if (allergyId == null) {
+			int index = Arrays.asList(AllergenType.values()).indexOf(allergen.getAllergenType());
+			allergen.setNonCodedAllergen(nonCodedAllergen[index]);
 			allergy = new Allergy(patient, allergen, null, null, null);
 		} else {
 			allergy = patientService.getAllergies(patient).getAllergy(allergyId);
