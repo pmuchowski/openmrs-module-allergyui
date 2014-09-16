@@ -42,13 +42,13 @@
 	<dependencyManagement>
 		<dependencies>
 	        <!-- Importing versions from refapp distro -->
-	        <dependency>
-	            <groupId>${distro.groupId}</groupId>
-	            <artifactId>${distro.artifactId}</artifactId>
-	            <version>${distro.version}</version>
-	            <type>pom</type>
-	            <scope>import</scope>
-	        </dependency>
+			<dependency>
+				<groupId>${distro.groupId}</groupId>
+				<artifactId>${distro.artifactId}</artifactId>
+				<version>${distro.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>uicommons-scss</artifactId>
