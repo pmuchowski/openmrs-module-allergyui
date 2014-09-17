@@ -13,8 +13,7 @@
 	            <li>
 	            	<span style="color:#00463f">${ ui.format(allergy.allergen) }</span>
 	            	<% allergy.reactions.eachWithIndex { reaction, index -> %>
-	            		<% if (index > 0) { %>,<% } %> 
-	            		<span style="color:darkgray">${ui.format(reaction)}</span>
+	            		<span style="color:darkgray"><% if (index > 0) { %>,<% } %> ${ui.format(reaction)}</span>
 	            	<% } %>
 	            </li>
             <% } %>
