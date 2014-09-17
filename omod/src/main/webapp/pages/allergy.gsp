@@ -66,7 +66,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                             <label for="allergen-${allergen.id}">${ui.format(allergen)}</label>
                             
                             <% if (allergen.uuid == '5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') { %>
-                            	<input type="text" maxlength="255" id="${typeName}nonCodedAllergen" name="nonCodedAllergen" ng-show="allergen == '${allergen.id}'" ng-model="nonCodedAllergen"/>
+                            	<input type="text" maxlength="255" id="${typeName}nonCodedAllergen" name="nonCodedAllergen" ng-show="allergen == '${allergen.id}'" />
                             <% } %>
                         </li>
                         <% } %>
