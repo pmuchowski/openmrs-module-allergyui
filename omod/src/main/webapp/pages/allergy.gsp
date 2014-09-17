@@ -66,7 +66,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                             <label for="allergen-${allergen.id}">${ui.format(allergen)}</label>
                             
                             <% if (allergen.uuid == '5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') { %>
-                            	<input type="text" id="${typeName}nonCodedAllergen" name="nonCodedAllergen" ng-show="allergen == '${allergen.id}'" ng-model="nonCodedAllergen"/>
+                            	<input type="text" maxlength="255" id="${typeName}nonCodedAllergen" name="nonCodedAllergen" ng-show="allergen == '${allergen.id}'" ng-model="nonCodedAllergen"/>
                             <% } %>
                         </li>
                         <% } %>
@@ -83,7 +83,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                     <input ng-model="reaction${reaction.id}" type="checkbox" id="reaction-${reaction.id}" class="allergy-reaction" name="allergyReactionConcepts" value="${reaction.id}" ng-init="reaction${reaction.id} = ${ allergyReactionConcepts.contains(reaction) }" />
                     <label for="reaction-${reaction.id}">${ui.format(reaction)}</label>
                     <% if (reaction.uuid == '5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') { %>
-                    	<input type="text" name="reactionNonCoded" ng-show="reaction${reaction.id}" <% if (allergy.reactionNonCoded) { %> value="${allergy.reactionNonCoded}" <% } %>/>
+                    	<input type="text" maxlength="255" name="reactionNonCoded" ng-show="reaction${reaction.id}" <% if (allergy.reactionNonCoded) { %> value="${allergy.reactionNonCoded}" <% } %>/>
                     <% } %>
                 </li>
             <% } %>
