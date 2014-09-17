@@ -83,6 +83,7 @@ public class AllergyPageController {
 	public Allergy getAllergy(@RequestParam(value = "allergyId", required = false) Integer allergyId,
 	                          @RequestParam("patientId") Patient patient,
 	                          @BindParams Allergen allergen,
+	                          @RequestParam(value = "codedAllergen", required = false) Concept codedAllergen,
 	                          @RequestParam(value = "nonCodedAllergen", required = false) String[] nonCodedAllergen,
 	                          @RequestParam(value = "allergyReactionConcepts", required = false) List<Concept> allergyReactionConcepts,
                               @RequestParam(value = "severity", required = false) Concept severity,
@@ -93,6 +94,7 @@ public class AllergyPageController {
 		
 		Allergy allergy;
 		if (allergyId == null) {
+			allergen.setCodedAllergen(codedAllergen); //without this line, i cannot save coded allergens.
 			if (!allergen.isCoded() && nonCodedAllergen.length > 0) {
 				allergen.setNonCodedAllergen(nonCodedAllergen[0]);
 			}
