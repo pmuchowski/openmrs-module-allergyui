@@ -93,7 +93,7 @@ public class AllergyPageController {
 		
 		Allergy allergy;
 		if (allergyId == null) {
-			if (!allergen.isCoded()) {
+			if (!allergen.isCoded() && nonCodedAllergen.length > 0) {
 				allergen.setNonCodedAllergen(nonCodedAllergen[0]);
 			}
 			allergy = new Allergy(patient, allergen, null, null, null);
