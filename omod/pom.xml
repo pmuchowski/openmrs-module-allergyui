@@ -41,12 +41,14 @@
 			<groupId>org.openmrs.api</groupId>
 			<artifactId>openmrs-api</artifactId>
 			<type>jar</type>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.openmrs.web</groupId>
 			<artifactId>openmrs-web</artifactId>
 			<type>jar</type>
+			<scope>provided</scope>
 		</dependency>
 		
 		<dependency>
@@ -81,6 +83,7 @@
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>allergyapi-api</artifactId>
+			<scope>provided</scope>
         </dependency>
 
 		<dependency>
