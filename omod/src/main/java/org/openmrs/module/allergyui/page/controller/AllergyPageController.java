@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.openmrs.Concept;
@@ -88,10 +89,12 @@ public class AllergyPageController {
                               @RequestParam(value = "severity", required = false) Concept severity,
                               @RequestParam(value = "reactionNonCoded", required = false) String reactionNonCoded,
                               @SpringBean("allergyProperties") AllergyProperties properties,
-	                          @SpringBean("allergyService") PatientService patientService) {
+	                          @SpringBean("allergyService") PatientService patientService,
+	                          HttpServletRequest request) {
 		
 		Allergy allergy;
 		if (allergyId == null) {
+			nonCodedAllergen = request.getParameterValues("nonCodedAllergen");
 			if (nonCodedAllergen.length > 0) {
 				int index = Arrays.asList(AllergenType.values()).indexOf(allergen.getAllergenType());
 				allergen.setNonCodedAllergen(nonCodedAllergen[index]);
