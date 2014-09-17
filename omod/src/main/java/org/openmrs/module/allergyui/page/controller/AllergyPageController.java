@@ -86,6 +86,7 @@ public class AllergyPageController {
 	public Allergy getAllergy(@RequestParam(value = "allergyId", required = false) Integer allergyId,
 	                          @RequestParam("patientId") Patient patient,
 	                          @BindParams Allergen allergen,
+	                          @RequestParam(value = "nonCodedAllergen", required = false) String[] nonCodedAllergen,
 	                          @RequestParam(value = "allergyReactionConcepts", required = false) List<Concept> allergyReactionConcepts,
                               @RequestParam(value = "severity", required = false) Concept severity,
                               @RequestParam(value = "reactionNonCoded", required = false) String reactionNonCoded,
@@ -95,11 +96,11 @@ public class AllergyPageController {
 		
 		Allergy allergy;
 		if (allergyId == null) {
-			String[] nonCodedAllergen = request.getParameterValues("nonCodedAllergen");
-			if (nonCodedAllergen.length > 0) {
+			nonCodedAllergen = request.getParameterValues("nonCodedAllergen");
+			if (nonCodedAllergen.length == 3) {
 				Concept coded = allergen.getCodedAllergen();
 				int index = Arrays.asList(AllergenType.values()).indexOf(allergen.getAllergenType());
-				allergen.setNonCodedAllergen(nonCodedAllergen[index] + " === " + nonCodedAllergen);
+				allergen.setNonCodedAllergen(nonCodedAllergen[index] + " 1== " + nonCodedAllergen[0] + " 2== " + nonCodedAllergen[1] + " 3== " + nonCodedAllergen[2]);
 				
 				try {
 					Field field = Allergen.class.getDeclaredField("codedAllergen");
