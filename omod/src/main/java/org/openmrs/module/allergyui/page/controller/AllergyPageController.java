@@ -84,7 +84,6 @@ public class AllergyPageController {
 	public Allergy getAllergy(@RequestParam(value = "allergyId", required = false) Integer allergyId,
 	                          @RequestParam("patientId") Patient patient,
 	                          @BindParams Allergen allergen,
-	                          @RequestParam(value = "nonCodedAllergen", required = false) String[] nonCodedAllergen,
 	                          @RequestParam(value = "allergyReactionConcepts", required = false) List<Concept> allergyReactionConcepts,
                               @RequestParam(value = "severity", required = false) Concept severity,
                               @RequestParam(value = "reactionNonCoded", required = false) String reactionNonCoded,
@@ -94,7 +93,7 @@ public class AllergyPageController {
 		
 		Allergy allergy;
 		if (allergyId == null) {
-			nonCodedAllergen = request.getParameterValues("nonCodedAllergen");
+			String[] nonCodedAllergen = request.getParameterValues("nonCodedAllergen");
 			if (nonCodedAllergen.length > 0) {
 				int index = Arrays.asList(AllergenType.values()).indexOf(allergen.getAllergenType());
 				allergen.setNonCodedAllergen(nonCodedAllergen[index]);
