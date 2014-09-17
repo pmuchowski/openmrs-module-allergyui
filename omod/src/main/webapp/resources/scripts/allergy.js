@@ -5,10 +5,20 @@ app.controller("allergyController", [ '$scope', function($scope) {
     $scope.allergen = null;
     $scope.allergenType = null;
     $scope.severity = null;
+    $scope.nonCodedAllergen = null;
 
+    $scope.canSave = function() {
+    	var id = $scope.allergenType + "nonCodedAllergen";
+    	if ( $("#" + id).is(':visible') ) {
+			return $scope.nonCodedAllergen;
+		}
+    	return $scope.allergen;
+    }
+    
     $scope.$watch('allergenType', function(newValue, oldValue) {
         // clear allergen any time they change the type
         $scope.allergen = null;
+        $scope.nonCodedAllergen = null;
     });
 
     $scope.$watch('allergen', function(newValue, oldValue) {
@@ -17,6 +27,8 @@ app.controller("allergyController", [ '$scope', function($scope) {
             $('input.allergy-reaction').attr('checked', false);
             $('input.allergy-severity').attr('checked', false);
             $('#allergy-comment').val('');
+            
+            $scope.nonCodedAllergen = null;
         }
     });
 

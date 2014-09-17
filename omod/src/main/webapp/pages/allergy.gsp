@@ -66,7 +66,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                             <label for="allergen-${allergen.id}">${ui.format(allergen)}</label>
                             
                             <% if (allergen.uuid == '5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') { %>
-                            	<input type="text" name="nonCodedAllergen" ng-show="allergen == '${allergen.id}'"/>
+                            	<input type="text" id="${typeName}nonCodedAllergen" name="nonCodedAllergen" ng-show="allergen == '${allergen.id}'" ng-model="nonCodedAllergen"/>
                             <% } %>
                         </li>
                         <% } %>
@@ -106,7 +106,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 	    </div>
 
 	    <div id="actions">
-	        <input type="submit" id="addAllergyBtn" class="confirm right" value="${ ui.message("coreapps.save") }" <% if(!isEdit){ %> ng-disabled="!allergen" <% } %>/>
+	        <input type="submit" id="addAllergyBtn" class="confirm right" value="${ ui.message("coreapps.save") }" <% if(!isEdit){ %> ng-disabled="!canSave()" <% } %>/>
 	        <input type="button" class="cancel" value="${ ui.message("coreapps.cancel") }"
 	         onclick="location.href='${ ui.pageLink("allergyui", "allergies", [patientId: patient.id]) }'" />
 	    </div>
