@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.allergyui.page.controller;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpSession;
 
 import org.openmrs.Concept;
 import org.openmrs.Patient;
+import org.openmrs.api.APIException;
 import org.openmrs.module.allergyapi.Allergen;
 import org.openmrs.module.allergyapi.AllergenType;
 import org.openmrs.module.allergyapi.Allergies;
@@ -95,8 +97,18 @@ public class AllergyPageController {
 		if (allergyId == null) {
 			String[] nonCodedAllergen = request.getParameterValues("nonCodedAllergen");
 			if (nonCodedAllergen.length > 0) {
+				Concept coded = allergen.getCodedAllergen();
 				int index = Arrays.asList(AllergenType.values()).indexOf(allergen.getAllergenType());
-				allergen.setNonCodedAllergen(nonCodedAllergen[index]);
+				allergen.setNonCodedAllergen(nonCodedAllergen[index] + " === " + nonCodedAllergen);
+				
+				try {
+					Field field = Allergen.class.getDeclaredField("codedAllergen");
+			        field.setAccessible(true);
+			        field.set(allergen, coded);
+				}
+				catch (Exception ex) {
+					throw new APIException(ex);
+				}
 			}
 			allergy = new Allergy(patient, allergen, null, null, null);
 		} else {
