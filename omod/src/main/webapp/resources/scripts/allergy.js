@@ -30,6 +30,14 @@ app.controller("allergyController", [ '$scope', function($scope) {
             
             $scope.nonCodedAllergen = null;
         }
+        
+        //Clicking OTHER NON-CODED for the first time, does not check the radio button
+        //So this is the hacky fix. Remove this function if you have a better option.
+        $( ".coded_allergens" ).each( function() {
+    		if ($(this).is(':checked') && document.activeElement == this) {
+    			$(this).trigger("click");
+    		}
+    	});
     });
 
     /*

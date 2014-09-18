@@ -23,12 +23,6 @@
         { label: "${ ui.message("allergyui.allergies") }", link: '${ui.pageLink("allergyui", "allergies", [patientId: patient.id])}'},
         { label: "${ ui.escapeJs(title) }" }
     ];
-    
-    //Clicking OTHER NON-CODED for the first time, does not check the radio button
-    //So this is the hacky fix. Remove this function if you have a better option.
-    function changeAllergen(sender) {
-		sender.checked = true;
-	}
 </script>
 
 ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
@@ -61,7 +55,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                     <ul ng-show="allergenType == '${ typeName }'">
                         <% allergens.each { allergen -> %>
                         <li>
-                            <input id="allergen-${allergen.id}" type="radio" name="codedAllergen" value="${allergen.id}" class="coded_allergens" ng-model="allergen" onchange="changeAllergen(this)"
+                            <input id="allergen-${allergen.id}" type="radio" name="codedAllergen" value="${allergen.id}" class="coded_allergens" ng-model="allergen"
                                 ${(allergy.allergen != null && allergen == allergy.allergen.codedAllergen) ? "checked=checked" : ""}/>
                             <label for="allergen-${allergen.id}">${ui.format(allergen)}</label>
                             
