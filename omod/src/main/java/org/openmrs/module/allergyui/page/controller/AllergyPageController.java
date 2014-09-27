@@ -14,13 +14,17 @@
 package org.openmrs.module.allergyui.page.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.openmrs.Concept;
 import org.openmrs.Patient;
+import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.allergyapi.Allergen;
 import org.openmrs.module.allergyapi.AllergenType;
 import org.openmrs.module.allergyapi.Allergies;
@@ -42,7 +46,8 @@ public class AllergyPageController {
 	public void controller(PageModel model, @RequestParam(value = "allergyId", required = false) Integer allergyId,
 	                       @RequestParam("patientId") Patient patient, UiUtils ui,
 	                       @SpringBean("allergyService") PatientService patientService,
-	                       @SpringBean("allergyProperties") AllergyProperties properties) {
+	                       @SpringBean("allergyProperties") AllergyProperties properties,
+	                       @SpringBean("messageSource") MessageSourceService mss) {
 		
 		Allergy allergy;
 		if (allergyId == null) {
@@ -51,12 +56,13 @@ public class AllergyPageController {
 			allergy = patientService.getAllergies(patient).getAllergy(allergyId);
 		}
 		
-		setModelAttributes(allergy, model, properties);
+		setModelAttributes(allergy, model, properties, mss);
 	}
 	
 	public String post(@MethodParam("getAllergy") @BindParams Allergy allergy, @RequestParam("patientId") Patient patient,
 	                   PageModel model, @SpringBean("allergyService") PatientService patientService,
-	                   @SpringBean("allergyProperties") AllergyProperties properties, HttpSession session, UiUtils ui) {
+	                   @SpringBean("allergyProperties") AllergyProperties properties,
+	                   @SpringBean("messageSource") MessageSourceService mss, HttpSession session, UiUtils ui) {
 		
 		Allergies allergies = patientService.getAllergies(patient);
 		String successMsgCode = "allergyui.message.success";
@@ -75,7 +81,7 @@ public class AllergyPageController {
 			session.setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_ERROR_MESSAGE, "allergyui.message.fail");
 		}
 		
-		setModelAttributes(allergy, model, properties);
+		setModelAttributes(allergy, model, properties, mss);
 		
 		return null;
 	}
@@ -86,11 +92,10 @@ public class AllergyPageController {
 	                          @RequestParam(value = "codedAllergen", required = false) Concept codedAllergen,
 	                          @RequestParam(value = "nonCodedAllergen", required = false) String[] nonCodedAllergen,
 	                          @RequestParam(value = "allergyReactionConcepts", required = false) List<Concept> allergyReactionConcepts,
-                              @RequestParam(value = "severity", required = false) Concept severity,
-                              @RequestParam(value = "reactionNonCoded", required = false) String reactionNonCoded,
-                              @SpringBean("allergyProperties") AllergyProperties properties,
-	                          @SpringBean("allergyService") PatientService patientService,
-	                          HttpServletRequest request) {
+	                          @RequestParam(value = "severity", required = false) Concept severity,
+	                          @RequestParam(value = "reactionNonCoded", required = false) String reactionNonCoded,
+	                          @SpringBean("allergyProperties") AllergyProperties properties,
+	                          @SpringBean("allergyService") PatientService patientService, HttpServletRequest request) {
 		
 		Allergy allergy;
 		if (allergyId == null) {
@@ -117,57 +122,40 @@ public class AllergyPageController {
 			AllergyReaction reaction = allergy.getReaction(concept);
 			if (reaction == null) {
 				allergy.addReaction(new AllergyReaction(null, concept, nonCodedReaction));
-			}
-			else {
+			} else {
 				reaction.setReactionNonCoded(nonCodedReaction);
 			}
 		}
-
-        // need to explicitly handle severity because @BindParams doesn't handle the case where you unset it (and don't submit a parameter)
-        allergy.setSeverity(severity);
-
+		
+		// need to explicitly handle severity because @BindParams doesn't handle the case where you unset it (and don't submit a parameter)
+		allergy.setSeverity(severity);
+		
 		return allergy;
 	}
 	
-	private void setModelAttributes(Allergy allergy, PageModel model, AllergyProperties properties) {
+	private void setModelAttributes(Allergy allergy, PageModel model, AllergyProperties properties, MessageSourceService mss) {
 		
 		model.addAttribute("allergy", allergy);
 		model.addAttribute("allergenTypes", AllergenType.values());
 		
 		//drug allergens
-		List<Concept> concepts = new ArrayList<Concept>();
+		Comparator comparator = new ConceptByDisplayNameComparator(mss);
 		Concept concept = properties.getDrugAllergensConcept();
-		if (concept != null) {
-			concepts = concept.getSetMembers();
-		}
-		model.addAttribute("drugAllergens", concepts);
+		model.addAttribute("drugAllergens", getSortedSetMembers(concept, comparator));
 		
 		//food allergens
-		concepts = new ArrayList<Concept>();
 		concept = properties.getFoodAllergensConcept();
-		if (concept != null) {
-			concepts = concept.getSetMembers();
-		}
-		model.addAttribute("foodAllergens", concepts);
-		
+		model.addAttribute("foodAllergens", getSortedSetMembers(concept, comparator));
 		//environmental allergens
-		concepts = new ArrayList<Concept>();
 		concept = properties.getEnvironmentAllergensConcept();
-		if (concept != null) {
-			concepts = concept.getSetMembers();
-		}
-		model.addAttribute("environmentalAllergens", concepts);
+		model.addAttribute("environmentalAllergens", getSortedSetMembers(concept, comparator));
 		
 		//allergy reactions
-		concepts = new ArrayList<Concept>();
 		concept = properties.getAllergyReactionsConcept();
-		if (concept != null) {
-			concepts = concept.getSetMembers();
-		}
-		model.addAttribute("reactionConcepts", concepts);
+		model.addAttribute("reactionConcepts", getSortedSetMembers(concept, comparator));
 		
 		//severities
-		concepts = new ArrayList<Concept>();
+		List<Concept> concepts = new ArrayList<Concept>();
 		concept = properties.getMildSeverityConcept();
 		if (concept != null) {
 			concepts.add(concept);
@@ -203,5 +191,54 @@ public class AllergyPageController {
 			reactionConcepts.add(ar.getReaction());
 		}
 		return reactionConcepts;
+	}
+	
+	private List<Concept> getSortedSetMembers(Concept concept, Comparator comparator) {
+		List<Concept> setMembers = new ArrayList<Concept>();
+		if (concept != null) {
+			for (Concept c : concept.getSetMembers()) {
+				setMembers.add(c);
+			}
+		}
+		Collections.sort(setMembers, comparator);
+		
+		return setMembers;
+	}
+	
+	private class ConceptByDisplayNameComparator implements Comparator<Concept> {
+		
+		static final String OTHER_NON_CODED_UUID = "5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+		
+		static final String MESSAGE_CODE_PREFIX = "ui.i18n.Concept.name.";
+		
+		MessageSourceService mss;
+		
+		ConceptByDisplayNameComparator(MessageSourceService mss) {
+			this.mss = mss;
+		}
+		
+		@Override
+		public int compare(Concept c1, Concept c2) {
+			
+			if (OTHER_NON_CODED_UUID.equals(c1.getUuid())) {
+				return 1;
+			} else if (OTHER_NON_CODED_UUID.equals(c2.getUuid())) {
+				return -1;
+			}
+			
+			//We pass in an empty default so that we never get back message codes as the default
+			String name1 = mss.getMessage(MESSAGE_CODE_PREFIX + c1.getUuid(), null, "", null);
+			String name2 = mss.getMessage(MESSAGE_CODE_PREFIX + c2.getUuid(), null, "", null);
+			
+			if (StringUtils.isBlank(name1)) {
+				name1 = c1.getName().getName();
+			}
+			
+			if (StringUtils.isBlank(name2)) {
+				name2 = c2.getName().getName();
+			}
+			
+			return name1.compareTo(name2);
+		}
 	}
 }

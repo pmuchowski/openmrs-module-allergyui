@@ -38,6 +38,12 @@ app.controller("allergyController", [ '$scope', function($scope) {
     			$(this).trigger("click");
     		}
     	});
+        
+        $( ".coded_allergens_label" ).each( function() {
+    		if ($(this).attr("id") == ("allergen-" + $scope.allergen + "-label")) {
+    			 $('#allergen-' + $scope.allergen).attr('checked', true);
+    		}
+    	});
     });
 
     /*
