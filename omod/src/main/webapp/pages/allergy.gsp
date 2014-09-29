@@ -7,7 +7,7 @@
     ui.includeCss("allergyui", "allergy.css")
     def isEdit = allergy.id != null;
     def title = isEdit ?
-            ui.message("allergyui.editAllergy", ui.format(allergy.allergen)) :
+            ui.message("allergyui.editAllergy", ui.format(allergy.allergen.coded ? allergy.allergen.codedAllergen : allergy.allergen)) :
             ui.message("allergyui.addNewAllergy");
 
     def allergensByType = [
