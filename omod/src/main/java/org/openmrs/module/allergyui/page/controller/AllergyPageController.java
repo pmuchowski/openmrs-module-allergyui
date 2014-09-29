@@ -21,10 +21,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.openmrs.Concept;
 import org.openmrs.Patient;
-import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.allergyapi.Allergen;
 import org.openmrs.module.allergyapi.AllergenType;
 import org.openmrs.module.allergyapi.Allergies;
@@ -39,6 +37,7 @@ import org.openmrs.ui.framework.annotation.BindParams;
 import org.openmrs.ui.framework.annotation.MethodParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
+import org.openmrs.ui.util.ByFormattedObjectComparator;
 import org.springframework.web.bind.annotation.RequestParam;
 
 public class AllergyPageController {
@@ -46,8 +45,7 @@ public class AllergyPageController {
 	public void controller(PageModel model, @RequestParam(value = "allergyId", required = false) Integer allergyId,
 	                       @RequestParam("patientId") Patient patient, UiUtils ui,
 	                       @SpringBean("allergyService") PatientService patientService,
-	                       @SpringBean("allergyProperties") AllergyProperties properties,
-	                       @SpringBean("messageSource") MessageSourceService mss) {
+	                       @SpringBean("allergyProperties") AllergyProperties properties) {
 		
 		Allergy allergy;
 		if (allergyId == null) {
@@ -56,13 +54,12 @@ public class AllergyPageController {
 			allergy = patientService.getAllergies(patient).getAllergy(allergyId);
 		}
 		
-		setModelAttributes(allergy, model, properties, mss);
+		setModelAttributes(allergy, model, properties, ui);
 	}
 	
 	public String post(@MethodParam("getAllergy") @BindParams Allergy allergy, @RequestParam("patientId") Patient patient,
 	                   PageModel model, @SpringBean("allergyService") PatientService patientService,
-	                   @SpringBean("allergyProperties") AllergyProperties properties,
-	                   @SpringBean("messageSource") MessageSourceService mss, HttpSession session, UiUtils ui) {
+	                   @SpringBean("allergyProperties") AllergyProperties properties, HttpSession session, UiUtils ui) {
 		
 		Allergies allergies = patientService.getAllergies(patient);
 		String successMsgCode = "allergyui.message.success";
@@ -81,7 +78,7 @@ public class AllergyPageController {
 			session.setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_ERROR_MESSAGE, "allergyui.message.fail");
 		}
 		
-		setModelAttributes(allergy, model, properties, mss);
+		setModelAttributes(allergy, model, properties, ui);
 		
 		return null;
 	}
@@ -133,13 +130,13 @@ public class AllergyPageController {
 		return allergy;
 	}
 	
-	private void setModelAttributes(Allergy allergy, PageModel model, AllergyProperties properties, MessageSourceService mss) {
+	private void setModelAttributes(Allergy allergy, PageModel model, AllergyProperties properties, UiUtils ui) {
 		
 		model.addAttribute("allergy", allergy);
 		model.addAttribute("allergenTypes", AllergenType.values());
 		
 		//drug allergens
-		Comparator comparator = new ConceptByDisplayNameComparator(mss);
+		Comparator comparator = new ByFormattedObjectComparator(ui);
 		Concept concept = properties.getDrugAllergensConcept();
 		model.addAttribute("drugAllergens", getSortedSetMembers(concept, comparator));
 		
@@ -195,50 +192,23 @@ public class AllergyPageController {
 	
 	private List<Concept> getSortedSetMembers(Concept concept, Comparator comparator) {
 		List<Concept> setMembers = new ArrayList<Concept>();
+		Concept otherConcept = null;
+        //Other non coded concept should be last in the list, remove it and add it as last
 		if (concept != null) {
 			for (Concept c : concept.getSetMembers()) {
+				if ("5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA".equals(c.getUuid())) {
+					otherConcept = c;
+					continue;
+				}
 				setMembers.add(c);
 			}
 		}
+		
 		Collections.sort(setMembers, comparator);
+		if (otherConcept != null) {
+			setMembers.add(otherConcept);
+		}
 		
 		return setMembers;
-	}
-	
-	private class ConceptByDisplayNameComparator implements Comparator<Concept> {
-		
-		static final String OTHER_NON_CODED_UUID = "5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-		
-		static final String MESSAGE_CODE_PREFIX = "ui.i18n.Concept.name.";
-		
-		MessageSourceService mss;
-		
-		ConceptByDisplayNameComparator(MessageSourceService mss) {
-			this.mss = mss;
-		}
-		
-		@Override
-		public int compare(Concept c1, Concept c2) {
-			
-			if (OTHER_NON_CODED_UUID.equals(c1.getUuid())) {
-				return 1;
-			} else if (OTHER_NON_CODED_UUID.equals(c2.getUuid())) {
-				return -1;
-			}
-			
-			//We pass in an empty default so that we never get back message codes as the default
-			String name1 = mss.getMessage(MESSAGE_CODE_PREFIX + c1.getUuid(), null, "", null);
-			String name2 = mss.getMessage(MESSAGE_CODE_PREFIX + c2.getUuid(), null, "", null);
-			
-			if (StringUtils.isBlank(name1)) {
-				name1 = c1.getName().getName();
-			}
-			
-			if (StringUtils.isBlank(name2)) {
-				name2 = c2.getName().getName();
-			}
-			
-			return name1.compareTo(name2);
-		}
 	}
 }
