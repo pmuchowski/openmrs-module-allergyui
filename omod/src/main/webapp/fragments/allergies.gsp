@@ -12,6 +12,7 @@
             <% allergies.each { allergy -> %>
 	            <li>
 	            	<span style="color:#00463f">${ ui.format(allergy.allergen.coded ? allergy.allergen.codedAllergen : allergy.allergen) }</span>
+	            	<span style="color:darkgray">&rArr;</span>
 	            	<% allergy.reactions.eachWithIndex { reaction, index -> %>
 	            		<span style="color:darkgray"><% if (index > 0) { %>,<% } %> ${ui.format(reaction.reactionNonCoded ? reaction : reaction.reaction)}</span>
 	            	<% } %>
