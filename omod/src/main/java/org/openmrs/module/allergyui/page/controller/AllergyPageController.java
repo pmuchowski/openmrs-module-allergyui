@@ -201,11 +201,17 @@ public class AllergyPageController {
 	private List<Concept> getSortedSetMembers(Concept concept, Comparator comparator) {
 		List<Concept> setMembers = new ArrayList<Concept>();
 		Concept otherConcept = null;
+		Concept unknownConcept = null;
         //Other non coded concept should be last in the list, remove it and add it as last
+		//Unknown should come first
 		if (concept != null) {
 			for (Concept c : concept.getSetMembers()) {
 				if ("5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA".equals(c.getUuid())) {
 					otherConcept = c;
+					continue;
+				}
+				else if ("1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA".equals(c.getUuid())) {
+					unknownConcept = c;
 					continue;
 				}
 				setMembers.add(c);
@@ -215,6 +221,9 @@ public class AllergyPageController {
 		Collections.sort(setMembers, comparator);
 		if (otherConcept != null) {
 			setMembers.add(otherConcept);
+		}
+		if (unknownConcept != null) {
+			setMembers.add(0, unknownConcept);
 		}
 		
 		return setMembers;
