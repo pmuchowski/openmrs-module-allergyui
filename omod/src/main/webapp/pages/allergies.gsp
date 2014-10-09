@@ -56,7 +56,7 @@ ${ ui.includeFragment("uicommons", "infoAndErrorMessage")}
         
         <% allergies.each { allergy -> %>
             <tr>
-                <td> ${ ui.format(allergy.allergen.coded ? allergy.allergen.codedAllergen : allergy.allergen) } </td>
+                <td> <% if (!allergy.allergen.coded) { %>"<% } %>${ ui.format(allergy.allergen.coded ? allergy.allergen.codedAllergen : allergy.allergen) }<% if (!allergy.allergen.coded) { %>"<% } %> </td>
                 <td> 
                 	<% allergy.reactions.eachWithIndex { reaction, index -> %><% if (index > 0) { %>,<% } %> ${ui.format(reaction.reactionNonCoded ? reaction : reaction.reaction)}<% } %>
                 </td>
