@@ -23,6 +23,8 @@ import javax.servlet.http.HttpSession;
 
 import org.openmrs.Concept;
 import org.openmrs.Patient;
+import org.openmrs.api.context.Context;
+import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.allergyapi.Allergen;
 import org.openmrs.module.allergyapi.AllergenType;
 import org.openmrs.module.allergyapi.Allergies;
@@ -59,11 +61,17 @@ public class AllergyPageController {
 	
 	public String post(@MethodParam("getAllergy") @BindParams Allergy allergy, @RequestParam("patientId") Patient patient,
 	                   PageModel model, @SpringBean("allergyService") PatientService patientService,
-	                   @SpringBean("allergyProperties") AllergyProperties properties, HttpSession session, UiUtils ui) {
+	                   @SpringBean("allergyProperties") AllergyProperties properties,
+	                   @SpringBean("messageSourceService") MessageSourceService messageService, HttpSession session, UiUtils ui) {
 		
 		Allergies allergies = patientService.getAllergies(patient);
 		String successMsgCode = "allergyui.message.success";
 		if (allergy.getAllergyId() == null) {
+			if (allergies.containsAllergen(allergy)) {
+				String errorMessage = messageService.getMessage("allergyui.message.duplicateAllergen", new Object[] { allergy.getAllergen().toString()}, Context.getLocale());
+				session.setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_ERROR_MESSAGE, errorMessage);
+				return "redirect:allergyui/allergy.page?patientId=" + patient.getPatientId();
+			}
 			allergies.add(allergy);
 			successMsgCode = "allergyui.addNewAllergy.success";
 		}
