@@ -55,12 +55,17 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                     <ul ng-show="allergenType == '${ typeName }'">
                         <% allergens.each { allergen -> %>
                         <li>
-                            <input id="allergen-${allergen.id}" type="radio" name="codedAllergen" value="${allergen.id}" class="coded_allergens" ng-model="allergen"
-                                ${(allergy.allergen != null && allergen == allergy.allergen.codedAllergen) ? "checked=checked" : ""}/>
-                            <label for="allergen-${allergen.id}" id="allergen-${allergen.id}-label" class="coded_allergens_label">${ui.format(allergen)}</label>
-                            
                             <% if (allergen.uuid == '5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') { %>
-                            	<input type="text" maxlength="255" id="${typeName}nonCodedAllergen" name="nonCodedAllergen" ng-model="nonCodedAllergen" ng-show="allergen == '${allergen.id}'" />
+                                <input id="allergen-${ typeName }" type="radio" name="codedAllergen" value="${allergen.id}" class="coded_allergens" ng-model="allergen"
+                                    ${(allergy.allergen != null && allergen == allergy.allergen.codedAllergen) ? "checked=checked" : ""}/>
+                            <% } else { %>
+                                <input id="allergen-${allergen.id}" type="radio" name="codedAllergen" value="${allergen.id}" class="coded_allergens" ng-model="allergen"
+                                    ${(allergy.allergen != null && allergen == allergy.allergen.codedAllergen) ? "checked=checked" : ""}/>
+                            <% } %>
+                            <label for="allergen-${allergen.id}" id="allergen-${allergen.id}-label" class="coded_allergens_label">${ui.format(allergen)}</label>
+
+                            <% if (allergen.uuid == '5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') { %>
+                            	<input type="text" maxlength="255" id="${typeName}nonCodedAllergen" name="nonCodedAllergen" ng-model="nonCodedAllergen" ng-focus="otherFieldFocus()"/>
                             <% } %>
                         </li>
                         <% } %>

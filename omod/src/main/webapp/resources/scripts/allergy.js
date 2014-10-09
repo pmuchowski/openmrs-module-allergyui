@@ -8,13 +8,12 @@ app.controller("allergyController", [ '$scope', function($scope) {
     $scope.nonCodedAllergen = null;
 
     $scope.canSave = function() {
-    	var id = $scope.allergenType + "nonCodedAllergen";
-    	if ( $("#" + id).is(':visible') ) {
+    	if ( $('#allergen-' + $scope.allergenType).is(':checked') ) {
 			return $scope.nonCodedAllergen;
 		}
     	return $scope.allergen;
     }
-    
+
     $scope.$watch('allergenType', function(newValue, oldValue) {
         // clear allergen any time they change the type
         $scope.allergen = null;
@@ -27,25 +26,14 @@ app.controller("allergyController", [ '$scope', function($scope) {
             $('input.allergy-reaction').attr('checked', false);
             $('input.allergy-severity').attr('checked', false);
             $('#allergy-comment').val('');
-            
+
             $scope.nonCodedAllergen = null;
         }
-        
-        //Clicking OTHER NON-CODED for the first time, does not check the radio button
-        //So this is the hacky fix. Remove this function if you have a better option.
-        $( ".coded_allergens" ).each( function() {
-    		if ($(this).is(':checked')) {
-    			$(this).trigger("click");
-    		}
-    	});
-        
-        $( ".coded_allergens_label" ).each( function() {
-    		if ($(this).attr("id") == ("allergen-" + $scope.allergen + "-label")) {
-    			 $('#allergen-' + $scope.allergen).attr('checked', true);
-    		}
-    	});
     });
 
+    $scope.otherFieldFocus = function() {
+        $('#allergen-' + $scope.allergenType).attr('checked', true);
+    };
     /*
      * This code lets us uncheck radio buttons.
      *
