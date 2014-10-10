@@ -1,5 +1,7 @@
 <%
     ui.decorateWith("appui", "standardEmrPage")
+    
+    ui.includeCss("allergyui", "allergies.css")
 %>
 <script type="text/javascript">
     var breadcrumbs = [
@@ -39,7 +41,7 @@ ${ ui.includeFragment("uicommons", "infoAndErrorMessage")}
     <tbody>
     	<% if (allergies.size() == 0) { %>
             <tr>
-                <td colspan="6" align="center" style="font-weight:bold">
+                <td colspan="6" align="center" class="allergyStatus">
                 <% if (allergies.allergyStatus != "No known allergies") { %>
                     ${ allergies.allergyStatus }
                 <% } else { %>
@@ -47,7 +49,7 @@ ${ ui.includeFragment("uicommons", "infoAndErrorMessage")}
                         ${ allergies.allergyStatus }
                         <input type="hidden" name="patientId" value="${patient.id}"/>
                         <input type="hidden" name="action" value="deactivate"/>
-                        <i style="color:red;cursor:pointer" class="icon-remove small" onclick="document.deactivateForm.submit();"/>
+                        <i class="icon-remove small removeAllergy" onclick="document.deactivateForm.submit();"/>
                      </form>
                 <% } %>
                 </td>
@@ -79,10 +81,10 @@ ${ ui.includeFragment("uicommons", "infoAndErrorMessage")}
     ${ ui.message("allergyui.addNewAllergy") }
 </button>
 
-<form method="POST" style="display:inline">
+<form method="POST">
     <input type="hidden" name="patientId" value="${patient.id}"/>
     <input type="hidden" name="action" value="confirmNoKnownAllergies"/>
-	<button type="submit" class="confirm" style="float:right; <% if (allergies.allergyStatus != "Unknown") { %> display:none; <% } %>">
+	<button type="submit" class="confirm right" style="<% if (allergies.allergyStatus != "Unknown") { %> display:none; <% } %>">
 	    ${ ui.message("allergyui.noKnownAllergy") }
 	</button>
 </form>

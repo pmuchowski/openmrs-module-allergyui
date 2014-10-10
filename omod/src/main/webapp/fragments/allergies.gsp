@@ -1,3 +1,7 @@
+<%  
+    ui.includeCss("allergyui", "allergies.css")
+%>
+
 <div class="info-section allergies">
     <div class="info-header">
         <i class="icon-medical"></i>
@@ -11,9 +15,9 @@
         <ul>
             <% allergies.each { allergy -> %>
 	            <li>
-	            	<span style="color:#00463f">  <% if (!allergy.allergen.coded) { %>"<% } %>${ ui.format(allergy.allergen.coded ? allergy.allergen.codedAllergen : allergy.allergen) }<% if (!allergy.allergen.coded) { %>"<% } %>  </span>
+	            	<span class="allergen">  <% if (!allergy.allergen.coded) { %>"<% } %>${ ui.format(allergy.allergen.coded ? allergy.allergen.codedAllergen : allergy.allergen) }<% if (!allergy.allergen.coded) { %>"<% } %>  </span>
 	            	<% allergy.reactions.eachWithIndex { reaction, index -> %>
-	            		<span style="color:darkgray"><% if (index > 0) { %>,<% } else { %> &rArr; <% } %> ${ui.format(reaction.reactionNonCoded ? reaction : reaction.reaction)}</span>
+	            		<span class="allergyReaction"><% if (index > 0) { %>,<% } else { %> &rArr; <% } %> ${ui.format(reaction.reactionNonCoded ? reaction : reaction.reaction)}</span>
 	            	<% } %>
 	            </li>
             <% } %>
