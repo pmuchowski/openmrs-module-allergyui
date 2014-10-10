@@ -99,7 +99,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 	        <% } %>
 	    </div>
 
-	    <div id="comment" style="display:flex">
+	    <div id="comment">
 	        <label>${ ui.message("allergyui.comment") }:</label>
 	        <textarea id="allergy-comment" maxlength="1024" name="comment">${allergy.comment != null ? allergy.comment : ""}</textarea>
 	    </div>
