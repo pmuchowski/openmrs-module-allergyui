@@ -13,18 +13,29 @@
  */
 package org.openmrs.module.allergyui.fragment.controller;
 
+import java.util.Collections;
+import java.util.Comparator;
+
 import org.openmrs.Patient;
+import org.openmrs.module.allergyapi.Allergies;
 import org.openmrs.module.allergyapi.api.PatientService;
+import org.openmrs.module.allergyui.extension.html.AllergyComparator;
+import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentModel;
+import org.openmrs.ui.util.ByFormattedObjectComparator;
 
 
 public class AllergiesFragmentController {
 	
-	public void controller(FragmentModel model, @FragmentParam("patientId") Patient patient,
+	public void controller(FragmentModel model, @FragmentParam("patientId") Patient patient, UiUtils ui,
 	                       @SpringBean("allergyService") PatientService patientService) {
 		
-		model.addAttribute("allergies", patientService.getAllergies(patient));
+		Allergies allergies = patientService.getAllergies(patient);
+		Comparator comparator = new AllergyComparator(new ByFormattedObjectComparator(ui));
+		Collections.sort(allergies, comparator);
+		
+		model.addAttribute("allergies", allergies);
 	}
 }

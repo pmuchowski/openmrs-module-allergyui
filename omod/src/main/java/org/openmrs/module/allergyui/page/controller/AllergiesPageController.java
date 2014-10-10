@@ -1,16 +1,21 @@
 package org.openmrs.module.allergyui.page.controller;
 
+import java.util.Collections;
+import java.util.Comparator;
+
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Patient;
 import org.openmrs.module.allergyapi.Allergies;
 import org.openmrs.module.allergyapi.api.PatientService;
+import org.openmrs.module.allergyui.extension.html.AllergyComparator;
 import org.openmrs.module.uicommons.UiCommonsConstants;
 import org.openmrs.module.uicommons.util.InfoErrorMessageUtil;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
+import org.openmrs.ui.util.ByFormattedObjectComparator;
 import org.springframework.web.bind.annotation.RequestParam;
 
 public class AllergiesPageController {
@@ -18,8 +23,12 @@ public class AllergiesPageController {
 	public void controller(PageModel model, @RequestParam("patientId") Patient patient, UiUtils ui,
 	                       @SpringBean("allergyService") PatientService patientService) {
 		
+		Allergies allergies = patientService.getAllergies(patient);
+		Comparator comparator = new AllergyComparator(new ByFormattedObjectComparator(ui));
+		Collections.sort(allergies, comparator);
+		
 		model.addAttribute("patient", patient);
-		model.addAttribute("allergies", patientService.getAllergies(patient));
+		model.addAttribute("allergies", allergies);
 	}
 	
 	public String post(@RequestParam("patientId") Patient patient,
