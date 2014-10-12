@@ -1,4 +1,4 @@
-var app = angular.module("allergyApp", ['ui.bootstrap']);
+var app = angular.module("allergyApp", ['allergyui.widget.select-drug-concept']);
 	
 app.controller("allergyController", [ '$scope', function($scope) {
 
@@ -6,9 +6,17 @@ app.controller("allergyController", [ '$scope', function($scope) {
     $scope.allergenType = null;
     $scope.severity = null;
     $scope.nonCodedAllergen = null;
+    $scope.otherCodedAllergen = null;
 
     $scope.canSave = function() {
-    	if ( $('#allergen-' + $scope.allergenType).is(':checked') ) {
+        if ($scope.allergenType == 'DRUG') {
+            if($scope.allergen && $scope.allergen != $scope.otherConceptId){
+                return true;
+            }
+
+            return $scope.otherCodedAllergen;
+        }
+        else if ( $('#allergen-' + $scope.allergenType).is(':checked') ) {
 			return $scope.nonCodedAllergen;
 		}
     	return $scope.allergen;
@@ -18,6 +26,8 @@ app.controller("allergyController", [ '$scope', function($scope) {
         // clear allergen any time they change the type
         $scope.allergen = null;
         $scope.nonCodedAllergen = null;
+        $scope.otherCodedAllergen = null;
+        $('.coded_allergens').attr('checked', false);
     });
 
     $scope.$watch('allergen', function(newValue, oldValue) {
@@ -28,6 +38,7 @@ app.controller("allergyController", [ '$scope', function($scope) {
             $('#allergy-comment').val('');
 
             $scope.nonCodedAllergen = null;
+            $scope.otherCodedAllergen = null;
         }
     });
 

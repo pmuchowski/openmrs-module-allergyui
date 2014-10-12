@@ -3,6 +3,13 @@
     ui.includeJavascript("uicommons", "angular.min.js")
     ui.includeJavascript("uicommons", "angular-ui/ui-bootstrap-tpls-0.11.0.min.js")
 	ui.includeJavascript("allergyui", "allergy.js")
+    ui.includeJavascript("uicommons", "angular-resource.min.js")
+    ui.includeJavascript("uicommons", "angular-common.js")
+    ui.includeJavascript("uicommons", "ngDialog/ngDialog.js")
+    ui.includeJavascript("uicommons", "ngDialog/ngDialog.js")
+    ui.includeJavascript("allergyui", "services/drugConceptService.js")
+    ui.includeJavascript("allergyui", "widgets/select-drug-concept.js")
+    ui.includeCss("uicommons", "ngDialog/ngDialog.min.css")
 
     ui.includeCss("allergyui", "allergy.css")
     def isEdit = allergy.id != null;
@@ -29,7 +36,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 
 <h2>${ title }</h2>
 
-<div ng-app="allergyApp" ng-controller="allergyController" ng-init="severity = ${ allergy?.severity?.id }; allergenType='${allergy.allergen == null ? "DRUG" : allergy.allergen.allergenType}'">
+<div ng-app="allergyApp" ng-controller="allergyController" ng-init="severity = ${ allergy?.severity?.id }; allergenType='${allergy.allergen == null ? "DRUG" : allergy.allergen.allergenType}'; otherConceptId=${otherNonCodedConcept.conceptId}">
 	<form method="post" id="allergy" action="${ ui.pageLink("allergyui", "allergy", [patientId: patient.id]) }">
 
         <input type="hidden" name="allergenType" value="{{allergenType}}"/>
@@ -65,7 +72,11 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                             <label for="allergen-${allergen.id}" id="allergen-${allergen.id}-label" class="coded_allergens_label">${ui.format(allergen)}</label>
 
                             <% if (allergen.uuid == '5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') { %>
-                            	<input type="text" maxlength="255" id="${typeName}nonCodedAllergen" name="nonCodedAllergen" ng-model="nonCodedAllergen" ng-focus="otherFieldFocus()"/>
+                                <% if(typeName == 'DRUG') { %>
+                                    <select-drug-concept id="otherCodedAllergen" ng-model="otherCodedAllergen" name="nonCodedAllergen" formfieldname="otherCodedAllergen" ng-focus="otherFieldFocus()" />
+                                <% } else {%>
+                            	    <input type="text" maxlength="255" id="${typeName}nonCodedAllergen" name="nonCodedAllergen" ng-model="nonCodedAllergen" ng-focus="otherFieldFocus()"/>
+                                <% } %>
                             <% } %>
                         </li>
                         <% } %>
