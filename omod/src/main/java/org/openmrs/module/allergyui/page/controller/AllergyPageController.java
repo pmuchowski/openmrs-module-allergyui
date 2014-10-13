@@ -146,24 +146,29 @@ public class AllergyPageController {
 	
 	private void setModelAttributes(Allergy allergy, PageModel model, AllergyProperties properties, UiUtils ui) {
 		
+		Concept unknownConcept = properties.getUnknownConcept();
+		
 		model.addAttribute("allergy", allergy);
 		model.addAttribute("allergenTypes", AllergenType.values());
+		model.addAttribute("unknownConcept", unknownConcept);
 		
+		String unknownConceptUuid = unknownConcept.getUuid();
+				
 		//drug allergens
 		Comparator comparator = new ByFormattedObjectComparator(ui);
 		Concept concept = properties.getDrugAllergensConcept();
-		model.addAttribute("drugAllergens", getSortedSetMembers(concept, comparator));
+		model.addAttribute("drugAllergens", getSortedSetMembers(concept, comparator, unknownConceptUuid));
 		
 		//food allergens
 		concept = properties.getFoodAllergensConcept();
-		model.addAttribute("foodAllergens", getSortedSetMembers(concept, comparator));
+		model.addAttribute("foodAllergens", getSortedSetMembers(concept, comparator, unknownConceptUuid));
 		//environmental allergens
 		concept = properties.getEnvironmentAllergensConcept();
-		model.addAttribute("environmentalAllergens", getSortedSetMembers(concept, comparator));
+		model.addAttribute("environmentalAllergens", getSortedSetMembers(concept, comparator, unknownConceptUuid));
 		
 		//allergy reactions
 		concept = properties.getAllergyReactionsConcept();
-		model.addAttribute("reactionConcepts", getSortedSetMembers(concept, comparator));
+		model.addAttribute("reactionConcepts", getSortedSetMembers(concept, comparator, unknownConceptUuid));
 		
 		//severities
 		List<Concept> concepts = new ArrayList<Concept>();
@@ -206,7 +211,7 @@ public class AllergyPageController {
 		return reactionConcepts;
 	}
 	
-	private List<Concept> getSortedSetMembers(Concept concept, Comparator comparator) {
+	private List<Concept> getSortedSetMembers(Concept concept, Comparator comparator, String unknownConceptUuid) {
 		List<Concept> setMembers = new ArrayList<Concept>();
 		Concept otherConcept = null;
 		Concept unknownConcept = null;
@@ -214,11 +219,11 @@ public class AllergyPageController {
 		//Unknown should come first
 		if (concept != null) {
 			for (Concept c : concept.getSetMembers()) {
-				if ("5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA".equals(c.getUuid())) {
+				if (Allergen.OTHER_NON_CODED_UUID.equals(c.getUuid())) {
 					otherConcept = c;
 					continue;
 				}
-				else if ("1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA".equals(c.getUuid())) {
+				else if (unknownConceptUuid.equals(c.getUuid())) {
 					unknownConcept = c;
 					continue;
 				}

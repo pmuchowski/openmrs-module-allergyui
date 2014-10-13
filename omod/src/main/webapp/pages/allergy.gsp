@@ -62,7 +62,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                     <ul ng-show="allergenType == '${ typeName }'">
                         <% allergens.each { allergen -> %>
                         <li>
-                            <% if (allergen.uuid == '5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') { %>
+                            <% if (allergen.id == otherNonCodedConcept.id) { %>
                                 <input id="allergen-${ typeName }" type="radio" name="codedAllergen" value="${allergen.id}" class="coded_allergens" ng-model="allergen"
                                     ${(allergy.allergen != null && allergen == allergy.allergen.codedAllergen) ? "checked=checked" : ""}/>
                             <% } else { %>
@@ -71,7 +71,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                             <% } %>
                             <label for="allergen-${allergen.id}" id="allergen-${allergen.id}-label" class="coded_allergens_label">${ui.format(allergen)}</label>
 
-                            <% if (allergen.uuid == '5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') { %>
+                            <% if (allergen.id == otherNonCodedConcept.id) { %>
                                 <% if(typeName == 'DRUG') { %>
                                     <select-drug-concept id="otherCodedAllergen" ng-model="otherCodedAllergen" name="nonCodedAllergen" formfieldname="otherCodedAllergen" ng-focus="otherFieldFocus()" />
                                 <% } else {%>
@@ -92,7 +92,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                 <li>
                     <input ng-model="reaction${reaction.id}" type="checkbox" id="reaction-${reaction.id}" class="allergy-reaction" name="allergyReactionConcepts" value="${reaction.id}" ng-init="reaction${reaction.id} = ${ allergyReactionConcepts.contains(reaction) }" />
                     <label for="reaction-${reaction.id}">${ui.format(reaction)}</label>
-                    <% if (reaction.uuid == '5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') { %>
+                    <% if (reaction.id == otherNonCodedConcept.id) { %>
                     	<input type="text" maxlength="255" name="reactionNonCoded" ng-show="reaction${reaction.id}" <% if (allergy.reactionNonCoded) { %> value="${allergy.reactionNonCoded}" <% } %>/>
                     <% } %>
                 </li>
