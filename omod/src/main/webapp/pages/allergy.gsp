@@ -7,8 +7,8 @@
     ui.includeJavascript("uicommons", "angular-common.js")
     ui.includeJavascript("uicommons", "ngDialog/ngDialog.js")
     ui.includeJavascript("uicommons", "ngDialog/ngDialog.js")
-    ui.includeJavascript("allergyui", "services/drugConceptService.js")
-    ui.includeJavascript("allergyui", "widgets/select-drug-concept.js")
+    ui.includeJavascript("uicommons", "services/conceptSearchService.js")
+    ui.includeJavascript("uicommons", "directives/coded-or-free-text-answer.js")
     ui.includeCss("uicommons", "ngDialog/ngDialog.min.css")
 
     ui.includeCss("allergyui", "allergy.css")
@@ -73,7 +73,8 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 
                             <% if (allergen.id == otherNonCodedConcept.id) { %>
                                 <% if(typeName == 'DRUG') { %>
-                                    <select-drug-concept id="otherCodedAllergen" ng-model="otherCodedAllergen" name="nonCodedAllergen" formfieldname="otherCodedAllergen" ng-focus="otherFieldFocus()" />
+                                    <input type="hidden" name="otherCodedAllergen" ng-value="otherCodedAllergen.concept ? otherCodedAllergen.concept.uuid : otherCodedAllergen.word">
+                                    <coded-or-free-text-answer id="${typeName}otherCodedAllergen" conceptClass="8d490dfc-c2cc-11de-8d13-0010c6dffd0f" ng-model="otherCodedAllergen" ng-focus="otherFieldFocus()" />
                                 <% } else {%>
                             	    <input type="text" maxlength="255" id="${typeName}nonCodedAllergen" name="nonCodedAllergen" ng-model="nonCodedAllergen" ng-focus="otherFieldFocus()"/>
                                 <% } %>

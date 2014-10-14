@@ -1,4 +1,4 @@
-var app = angular.module("allergyApp", ['allergyui.widget.select-drug-concept']);
+var app = angular.module("allergyApp", ['uicommons.widget.coded-or-free-text-answer']);
 	
 app.controller("allergyController", [ '$scope', function($scope) {
 
