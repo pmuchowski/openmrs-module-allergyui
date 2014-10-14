@@ -69,7 +69,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                                 <input id="allergen-${allergen.id}" type="radio" name="codedAllergen" value="${allergen.id}" class="coded_allergens" ng-model="allergen"
                                     ${(allergy.allergen != null && allergen == allergy.allergen.codedAllergen) ? "checked=checked" : ""}/>
                             <% } %>
-                            <label for="allergen-${allergen.id}" id="allergen-${allergen.id}-label" class="coded_allergens_label">${ui.format(allergen)}</label>
+                            <label for="allergen-${allergen.id}" id="allergen-${allergen.id}-label" class="coded_allergens_label" ng-click="otherFieldFocus()">${ui.format(allergen)}</label>
 
                             <% if (allergen.id == otherNonCodedConcept.id) { %>
                                 <% if(typeName == 'DRUG') { %>
