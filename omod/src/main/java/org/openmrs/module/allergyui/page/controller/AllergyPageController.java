@@ -34,6 +34,7 @@ import org.openmrs.module.allergyapi.AllergyReaction;
 import org.openmrs.module.allergyapi.api.PatientService;
 import org.openmrs.module.uicommons.UiCommonsConstants;
 import org.openmrs.module.uicommons.util.InfoErrorMessageUtil;
+import org.openmrs.ui.framework.CodedValueOrFreeText;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.BindParams;
 import org.openmrs.ui.framework.annotation.MethodParam;
@@ -62,13 +63,15 @@ public class AllergyPageController {
 	public String post(@MethodParam("getAllergy") @BindParams Allergy allergy, @RequestParam("patientId") Patient patient,
 	                   PageModel model, @SpringBean("allergyService") PatientService patientService,
 	                   @SpringBean("allergyProperties") AllergyProperties properties,
-	                   @SpringBean("messageSourceService") MessageSourceService messageService, HttpSession session, UiUtils ui) {
+	                   @SpringBean("messageSourceService") MessageSourceService messageService, HttpSession session,
+	                   UiUtils ui) {
 		
 		Allergies allergies = patientService.getAllergies(patient);
 		String successMsgCode = "allergyui.message.success";
 		if (allergy.getAllergyId() == null) {
 			if (allergies.containsAllergen(allergy)) {
-				String errorMessage = messageService.getMessage("allergyui.message.duplicateAllergen", new Object[] { allergy.getAllergen().toString()}, Context.getLocale());
+				String errorMessage = messageService.getMessage("allergyui.message.duplicateAllergen",
+				    new Object[] { allergy.getAllergen().toString() }, Context.getLocale());
 				session.setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_ERROR_MESSAGE, errorMessage);
 				return "redirect:allergyui/allergy.page?patientId=" + patient.getPatientId();
 			}
@@ -95,7 +98,7 @@ public class AllergyPageController {
 	                          @RequestParam("patientId") Patient patient,
 	                          @BindParams Allergen allergen,
 	                          @RequestParam(value = "codedAllergen", required = false) Concept codedAllergen,
-	                          @RequestParam(value = "otherCodedAllergen", required = false) String otherCodedAllergenUuid,
+	                          @RequestParam(value = "otherCodedAllergen", required = false) CodedValueOrFreeText other,
 	                          @RequestParam(value = "nonCodedAllergen", required = false) String[] nonCodedAllergen,
 	                          @RequestParam(value = "allergyReactionConcepts", required = false) List<Concept> allergyReactionConcepts,
 	                          @RequestParam(value = "severity", required = false) Concept severity,
@@ -105,9 +108,15 @@ public class AllergyPageController {
 		
 		Allergy allergy;
 		if (allergyId == null) {
-			Concept otherCoded = Context.getConceptService().getConceptByUuid(otherCodedAllergenUuid);
-			if (otherCoded != null) {
-				allergen.setCodedAllergen(otherCoded);
+			if (other != null) {
+				Object otherValue = other.getValue();
+				if (otherValue != null) {
+					if (otherValue instanceof Concept) {
+						allergen.setCodedAllergen((Concept) otherValue);
+					} else {
+						allergen.setNonCodedAllergen(otherValue.toString());
+					}
+				}
 			} else {
 				allergen.setCodedAllergen(codedAllergen); //without this line, i cannot save coded allergens.
 			}
@@ -153,7 +162,7 @@ public class AllergyPageController {
 		model.addAttribute("unknownConcept", unknownConcept);
 		
 		String unknownConceptUuid = unknownConcept.getUuid();
-				
+
 		//drug allergens
 		Comparator comparator = new ByFormattedObjectComparator(ui);
 		Concept concept = properties.getDrugAllergensConcept();
@@ -215,15 +224,14 @@ public class AllergyPageController {
 		List<Concept> setMembers = new ArrayList<Concept>();
 		Concept otherConcept = null;
 		Concept unknownConcept = null;
-        //Other non coded concept should be last in the list, remove it and add it as last
+		//Other non coded concept should be last in the list, remove it and add it as last
 		//Unknown should come first
 		if (concept != null) {
 			for (Concept c : concept.getSetMembers()) {
 				if (Allergen.OTHER_NON_CODED_UUID.equals(c.getUuid())) {
 					otherConcept = c;
 					continue;
-				}
-				else if (unknownConceptUuid.equals(c.getUuid())) {
+				} else if (unknownConceptUuid.equals(c.getUuid())) {
 					unknownConcept = c;
 					continue;
 				}
