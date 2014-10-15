@@ -49,7 +49,7 @@ ${ ui.includeFragment("uicommons", "infoAndErrorMessage")}
                         ${ allergies.allergyStatus }
                         <input type="hidden" name="patientId" value="${patient.id}"/>
                         <input type="hidden" name="action" value="deactivate"/>
-                        <i class="icon-remove small removeAllergy" onclick="document.deactivateForm.submit();"/>
+                        <i class="icon-remove small delete-action" onclick="document.deactivateForm.submit();"/>
                      </form>
                 <% } %>
                 </td>
