@@ -7,6 +7,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Patient;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.allergyapi.Allergies;
 import org.openmrs.module.allergyapi.AllergyConstants;
 import org.openmrs.module.allergyapi.api.PatientService;
@@ -30,7 +31,7 @@ public class AllergiesPageController {
 		
 		model.addAttribute("patient", patient);
 		model.addAttribute("allergies", allergies);
-		model.addAttribute("privilegeModifyAllergies", AllergyConstants.PRIVILEGE_MODIFY_ALLERGIES);
+		model.addAttribute("hasModifyAllergiesPrivilege", Context.getAuthenticatedUser().hasPrivilege(AllergyConstants.PRIVILEGE_MODIFY_ALLERGIES));
 	}
 	
 	public String post(@RequestParam("patientId") Patient patient,

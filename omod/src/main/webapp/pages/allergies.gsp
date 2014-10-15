@@ -34,7 +34,10 @@ ${ ui.includeFragment("uicommons", "infoAndErrorMessage")}
 	        <th>${ ui.message("allergyui.severity") }</th>
 	        <th>${ ui.message("allergyui.comment") }</th>
 	        <th>${ ui.message("allergyui.lastUpdated") }</th>
-	        <th>${ ui.message("coreapps.actions") }</th>
+	        
+	        <% if (hasModifyAllergiesPrivilege) { %>
+	        	<th>${ ui.message("coreapps.actions") }</th>
+	        <% } %>
 	    </tr>
     </thead>
     
@@ -66,7 +69,7 @@ ${ ui.includeFragment("uicommons", "infoAndErrorMessage")}
                 <td> ${ allergy.comment } </td>
                 <td> ${ ui.formatDatetimePretty(allergy.dateLastUpdated) } </td>
                 
-                <% if (sessionContext.currentUser.hasPrivilege(privilegeModifyAllergies)) { %>
+                <% if (hasModifyAllergiesPrivilege) { %>
 	                <td>
 	                	<i class="icon-pencil edit-action" title="${ ui.message("coreapps.edit") }"
 	                       onclick="location.href='${ ui.pageLink("allergyui", "allergy", [allergyId:allergy.id, patientId: patient.id]) }'"></i>
@@ -80,7 +83,7 @@ ${ ui.includeFragment("uicommons", "infoAndErrorMessage")}
 
 <br/>
 
-<% if (sessionContext.currentUser.hasPrivilege(privilegeModifyAllergies)) { %>
+<% if (hasModifyAllergiesPrivilege) { %>
 	<button class="confirm" onclick="location.href='${ ui.pageLink("allergyui", "allergy", [patientId: patient.id]) }'">
 	    ${ ui.message("allergyui.addNewAllergy") }
 	</button>
