@@ -14,7 +14,7 @@
     	jq("#allergyId").val(id);
     	jq("#removeAllergyMessage").text('${ ui.message("allergyui.removeAllergy.message") }'.replace("{0}", allergy));
     	showRemoveAllergyDialog(allergy, id);
-    }
+    }            
 </script>
 
 ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
@@ -65,11 +65,14 @@ ${ ui.includeFragment("uicommons", "infoAndErrorMessage")}
                 <td> <% if (allergy.severity) { %> ${ ui.format(allergy.severity.name) } <% } %> </td>
                 <td> ${ allergy.comment } </td>
                 <td> ${ ui.formatDatetimePretty(allergy.dateLastUpdated) } </td>
-                <td>
-                	<i class="icon-pencil edit-action" title="${ ui.message("coreapps.edit") }"
-                       onclick="location.href='${ ui.pageLink("allergyui", "allergy", [allergyId:allergy.id, patientId: patient.id]) }'"></i>
-                    <i class="icon-remove delete-action" title="${ ui.message("coreapps.delete") }" onclick="removeAllergy('${ allergy.allergen }', ${ allergy.id})"></i>
-                </td>
+                
+                <% if (sessionContext.currentUser.hasPrivilege(privilegeModifyAllergies)) { %>
+	                <td>
+	                	<i class="icon-pencil edit-action" title="${ ui.message("coreapps.edit") }"
+	                       onclick="location.href='${ ui.pageLink("allergyui", "allergy", [allergyId:allergy.id, patientId: patient.id]) }'"></i>
+	                    <i class="icon-remove delete-action" title="${ ui.message("coreapps.delete") }" onclick="removeAllergy('${ allergy.allergen }', ${ allergy.id})"></i>
+	                </td>
+                <% } %>
             </tr>
         <% } %>
     </tbody>
@@ -77,17 +80,19 @@ ${ ui.includeFragment("uicommons", "infoAndErrorMessage")}
 
 <br/>
 
-<button class="confirm" onclick="location.href='${ ui.pageLink("allergyui", "allergy", [patientId: patient.id]) }'">
-    ${ ui.message("allergyui.addNewAllergy") }
-</button>
-
-<form method="POST">
-    <input type="hidden" name="patientId" value="${patient.id}"/>
-    <input type="hidden" name="action" value="confirmNoKnownAllergies"/>
-	<button type="submit" class="confirm right" style="<% if (allergies.allergyStatus != "Unknown") { %> display:none; <% } %>">
-	    ${ ui.message("allergyui.noKnownAllergy") }
+<% if (sessionContext.currentUser.hasPrivilege(privilegeModifyAllergies)) { %>
+	<button class="confirm" onclick="location.href='${ ui.pageLink("allergyui", "allergy", [patientId: patient.id]) }'">
+	    ${ ui.message("allergyui.addNewAllergy") }
 	</button>
-</form>
+	
+	<form method="POST">
+	    <input type="hidden" name="patientId" value="${patient.id}"/>
+	    <input type="hidden" name="action" value="confirmNoKnownAllergies"/>
+		<button type="submit" class="confirm right" style="<% if (allergies.allergyStatus != "Unknown") { %> display:none; <% } %>">
+		    ${ ui.message("allergyui.noKnownAllergy") }
+		</button>
+	</form>
+<% } %>
 
 <%/* DIALOGS */%>
 <div id="allergyui-remove-allergy-dialog" class="dialog" style="display: none">
