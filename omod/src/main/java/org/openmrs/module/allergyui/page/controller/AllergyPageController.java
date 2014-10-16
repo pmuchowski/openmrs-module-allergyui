@@ -31,6 +31,7 @@ import org.openmrs.module.allergyapi.Allergies;
 import org.openmrs.module.allergyapi.Allergy;
 import org.openmrs.module.allergyapi.AllergyProperties;
 import org.openmrs.module.allergyapi.AllergyReaction;
+import org.openmrs.module.allergyapi.AllergyValidator;
 import org.openmrs.module.allergyapi.api.PatientService;
 import org.openmrs.module.uicommons.UiCommonsConstants;
 import org.openmrs.module.uicommons.util.InfoErrorMessageUtil;
@@ -41,6 +42,9 @@ import org.openmrs.ui.framework.annotation.MethodParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.openmrs.ui.util.ByFormattedObjectComparator;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.RequestParam;
 
 public class AllergyPageController {
@@ -64,29 +68,37 @@ public class AllergyPageController {
 	                   PageModel model, @SpringBean("allergyService") PatientService patientService,
 	                   @SpringBean("allergyProperties") AllergyProperties properties,
 	                   @SpringBean("messageSourceService") MessageSourceService messageService, HttpSession session,
-	                   UiUtils ui) {
+	                   UiUtils ui) throws Exception {
 		
-		Allergies allergies = patientService.getAllergies(patient);
-		String successMsgCode = "allergyui.message.success";
-		if (allergy.getAllergyId() == null) {
-			if (allergies.containsAllergen(allergy)) {
-				String errorMessage = messageService.getMessage("allergyui.message.duplicateAllergen",
-				    new Object[] { allergy.getAllergen().toString() }, Context.getLocale());
-				session.setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_ERROR_MESSAGE, errorMessage);
-				return "redirect:allergyui/allergy.page?patientId=" + patient.getPatientId();
-			}
-			allergies.add(allergy);
-			successMsgCode = "allergyui.addNewAllergy.success";
-		}
+		Errors errors = new BeanPropertyBindingResult(allergy, "allergy");
+		new AllergyValidator().validate(allergy, errors);
 		
-		try {
-			patientService.setAllergies(patient, allergies);
-			InfoErrorMessageUtil.flashInfoMessage(session, successMsgCode);
+		if (errors.hasErrors()) {
+			addModelErrors(model, errors, session, messageService);
+		} else {
+			Allergies allergies = patientService.getAllergies(patient);
+			String successMsgCode = "allergyui.message.success";
 			
-			return "redirect:allergyui/allergies.page?patientId=" + patient.getPatientId();
-		}
-		catch (Exception e) {
-			session.setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_ERROR_MESSAGE, "allergyui.message.fail");
+			if (allergy.getAllergyId() == null) {
+				if (allergies.containsAllergen(allergy)) {
+					String errorMessage = messageService.getMessage("allergyui.message.duplicateAllergen",
+					    new Object[] { allergy.getAllergen().toString() }, Context.getLocale());
+					session.setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_ERROR_MESSAGE, errorMessage);
+					return "redirect:allergyui/allergy.page?patientId=" + patient.getPatientId();
+				}
+				allergies.add(allergy);
+				successMsgCode = "allergyui.addNewAllergy.success";
+			}
+			
+			try {
+				patientService.setAllergies(patient, allergies);
+				InfoErrorMessageUtil.flashInfoMessage(session, successMsgCode);
+				
+				return "redirect:allergyui/allergies.page?patientId=" + patient.getPatientId();
+			}
+			catch (Exception e) {
+				session.setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_ERROR_MESSAGE, "allergyui.message.fail");
+			}
 		}
 		
 		setModelAttributes(allergy, model, properties, ui);
@@ -162,7 +174,7 @@ public class AllergyPageController {
 		model.addAttribute("unknownConcept", unknownConcept);
 		
 		String unknownConceptUuid = unknownConcept.getUuid();
-
+		
 		//drug allergens
 		Comparator comparator = new ByFormattedObjectComparator(ui);
 		Concept concept = properties.getDrugAllergensConcept();
@@ -248,5 +260,19 @@ public class AllergyPageController {
 		}
 		
 		return setMembers;
+	}
+	
+	private void addModelErrors(PageModel model, Errors errors, HttpSession session, MessageSourceService mss)
+	    throws Exception {
+		model.addAttribute("errors", errors);
+		StringBuffer errorMessage = new StringBuffer(mss.getMessage("error.failed.validation"));
+		errorMessage.append("<ul>");
+		for (ObjectError error : errors.getAllErrors()) {
+			errorMessage.append("<li>");
+			errorMessage.append(mss.getMessage(error.getCode(), error.getArguments(), error.getDefaultMessage(), null));
+			errorMessage.append("</li>");
+		}
+		errorMessage.append("</ul>");
+		session.setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_ERROR_MESSAGE, errorMessage.toString());
 	}
 }

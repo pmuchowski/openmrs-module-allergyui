@@ -39,6 +39,7 @@
 		<distro.artifactId>referenceapplication</distro.artifactId>
 		<distro.version>2.2-SNAPSHOT</distro.version>
 		<openMRSVersion>1.9.1</openMRSVersion>
+        <allergyapiVersion>1.1-SNAPSHOT</allergyapiVersion>
         <uiframeworkVersion>3.3-SNAPSHOT</uiframeworkVersion>
 	</properties>
 
