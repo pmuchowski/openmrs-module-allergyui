@@ -1,18 +1,11 @@
+@import "variables";
+
 .allergyStatus {
 	font-weight: bold;
 }
 
-.removeAllergy {
-	color: red;
-	cursor:pointer;
-}
-
-.allergen {
-	color: #00463f;
-}
-
 .allergyReaction {
-	color: darkgray;
+	color: $darkerGrey;
 }
 
 form {
