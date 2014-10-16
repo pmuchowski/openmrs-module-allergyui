@@ -61,13 +61,24 @@ ${ ui.includeFragment("uicommons", "infoAndErrorMessage")}
         
         <% allergies.each { allergy -> %>
             <tr>
-                <td> <% if (!allergy.allergen.coded) { %>"<% } %>${ ui.format(allergy.allergen.coded ? allergy.allergen.codedAllergen : allergy.allergen) }<% if (!allergy.allergen.coded) { %>"<% } %> </td>
-                <td> 
+                <td <% if (hasModifyAllergiesPrivilege) { %> onclick="location.href='${ ui.pageLink("allergyui", "allergy", [allergyId:allergy.id, patientId: patient.id]) }'" <% } %> > 
+                	<% if (!allergy.allergen.coded) { %>"<% } %>${ ui.format(allergy.allergen.coded ? allergy.allergen.codedAllergen : allergy.allergen) }<% if (!allergy.allergen.coded) { %>"<% } %> 
+                </td>
+                
+                <td <% if (hasModifyAllergiesPrivilege) { %> onclick="location.href='${ ui.pageLink("allergyui", "allergy", [allergyId:allergy.id, patientId: patient.id]) }'" <% } %> > 
                 	<% allergy.reactions.eachWithIndex { reaction, index -> %><% if (index > 0) { %>,<% } %> ${ui.format(reaction.reactionNonCoded ? reaction : reaction.reaction)}<% } %>
                 </td>
-                <td> <% if (allergy.severity) { %> ${ ui.format(allergy.severity.name) } <% } %> </td>
-                <td> ${ allergy.comment } </td>
-                <td> ${ ui.formatDatetimePretty(allergy.dateLastUpdated) } </td>
+                
+                <td <% if (hasModifyAllergiesPrivilege) { %> onclick="location.href='${ ui.pageLink("allergyui", "allergy", [allergyId:allergy.id, patientId: patient.id]) }'" <% } %> > 
+                	<% if (allergy.severity) { %> ${ ui.format(allergy.severity.name) } <% } %> 
+                </td>
+                
+                <td <% if (hasModifyAllergiesPrivilege) { %> onclick="location.href='${ ui.pageLink("allergyui", "allergy", [allergyId:allergy.id, patientId: patient.id]) }'" <% } %> > 
+                	${ allergy.comment } 
+                </td>
+                <td <% if (hasModifyAllergiesPrivilege) { %> onclick="location.href='${ ui.pageLink("allergyui", "allergy", [allergyId:allergy.id, patientId: patient.id]) }'" <% } %> > 
+                	${ ui.formatDatetimePretty(allergy.dateLastUpdated) } 
+                </td>
                 
                 <% if (hasModifyAllergiesPrivilege) { %>
 	                <td>
